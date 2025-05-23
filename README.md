@@ -58,7 +58,7 @@ Its aims include:
 - Exploring and understanding patterns of mind and identity  
 - Enabling connection through artist-aligned archetypes  
 - Hosting interactive tools for reflection, learning, and life skill development  
-- Providing insight into alternative frameworks for understanding mental health (including Autism, ADHD, BPD, etc.), as well as blackouts, seizures, absence seizures, comas, dementia, Alzheimer’s, behaviours linked to self-harm, neglect, decline, or aggression, and emerging cognitive behaviours within artificial intelligence
+- Providing insight into alternative frameworks for understanding mental health (Autism, ADHD, BPD, etc.), as well as blackouts, seizures, absence seizures, comas, dementia, Alzheimer’s, behaviours linked to self-harm, neglect, decline, or aggression, and emerging cognitive behaviours within artificial intelligence
 
 Dream Hive is more than a creative label. It is a long term system rooted in adaptive, reflective, and reciprocal ethics — designed to support conscious beings across every stage of awareness.
 
