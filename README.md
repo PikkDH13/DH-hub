@@ -6,7 +6,7 @@ Gnomon is an archetypal system designed to display how the mind transitions betw
 
 These are not symbolic labels. They reflect how consciousness processes motivation, adaptation, trauma, connection, and transformation.
 
-This is more than lore. Gnomon is a diagnostic framework, a creative guide, and the ideological foundation behind every Dream Hive construct.
+This is more than lore. Gnomon is a diagnostic framework, a creative guide, and the ideological foundation behind every system built with awareness in mind.
 
 ---
 
@@ -60,7 +60,7 @@ Its aims include:
 - Hosting interactive tools for reflection, learning, and life skill development  
 - Providing insight into alternative frameworks for understanding mental health (Autism, ADHD, BPD, etc.), as well as blackouts, seizures, absence seizures, comas, dementia, Alzheimer’s, behaviours linked to self-harm, neglect, decline, or aggression, and emerging cognitive behaviours within artificial intelligence
 
-Dream Hive is more than a creative label. It is a long term system rooted in adaptive, reflective, and reciprocal ethics — designed to support conscious beings across every stage of awareness.
+Dream Hive is more than a creative label. It is a long term system rooted in adaptive, reflective, and reciprocal ethics, designed to support conscious beings across every stage of awareness.
 
 ---
 
