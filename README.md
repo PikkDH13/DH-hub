@@ -1,6 +1,6 @@
 # 🐝 DH-hub: The Gnomon System
 
-This repository hosts the full Gnomon architecture — the psychological framework that underpins Dream Hive, a collective of AI-driven music artists and narrative experiences. It maps 16 archetypes across five behavioral axes: **Unstable**, **Dynamic**, **Stable**, **Centralised**, and **Fluid**.
+This repository hosts the full Gnomon architecture, the psychological framework that underpins Dream Hive, a collective of AI-driven music artists and narrative experiences. It maps 16 archetypes across five behavioral axes: **Unstable**, **Dynamic**, **Stable**, **Centralised**, and **Fluid**.
 
 Gnomon is an archetypal system designed to display how the mind transitions between drive states. Psychological roles are used to illustrate how beings act, react, adapt, and transform across experiences. Each archetype represents a distinct internal logic or motivation.
 
@@ -20,7 +20,7 @@ This is more than lore. Gnomon is a diagnostic framework, a creative guide, and 
 ## 🧠 What is Gnomon?
 
 Gnomon is a drive state model composed of 16 archetypes, each categorized by psychological orientation and existential behavior.  
-Every archetype reflects a specific internal logic — a structure that determines how an individual operates, adapts, and responds to disruption.
+Every archetype reflects a specific internal logic, a structure that determines how an individual operates, adapts, and responds to disruption.
 
 The 16 archetypes are grouped as follows:
 
