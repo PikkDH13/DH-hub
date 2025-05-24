@@ -12,7 +12,7 @@ This is more than lore. Gnomon is a diagnostic framework, a creative guide, and 
 
 ## 🌐 Live Website
 
-**[https://pikkdh13.github.io/DH-hub](https://pikkdh13.github.io/DH-hub)**  
+**[https://www.dreamhive.co.uk](https://www.dreamhive.co.uk)**  
 *(URL will be active once GitHub Pages is enabled and the site is deployed.)*
 
 ---
