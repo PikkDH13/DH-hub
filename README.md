@@ -13,7 +13,6 @@ This is more than lore. Gnomon is a diagnostic framework, a creative guide, and 
 ## 🌐 Live Website
 
 **[https://www.dreamhive.co.uk](https://www.dreamhive.co.uk)**  
-*(URL will be active once GitHub Pages is enabled and the site is deployed.)*
 
 ---
 
