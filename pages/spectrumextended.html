@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum Extended - Framework</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base & Theme Variables (copied from framework.html) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #1a1a1a; --bg-secondary: #2c2c2c; --bg-tertiary: #3a3a3a;
+            --text-primary: #f0f0f0; --text-secondary: #a0a0a0; --text-terminal: #00e676;
+            --accent-green: #32CD32; --border-color: #444;
+            --list-hover-bg: #3f3f3f; --list-active-bg: #505050;
+            --header-orb-glow-color: rgba(173, 216, 230, 0.6);
+            --palette-gold-orange: #ffc793;
+            --highlight-orange: var(--palette-gold-orange);
+            --gnomon-portal-bg: #222;
+            --gnomon-portal-border: #555;
+        }
+        html { scroll-behavior: smooth; }
+        html, body { zoom: 1 !important; -webkit-text-size-adjust: 100% !important; text-size-adjust: 100% !important; }
+
+        body {
+            font-family: 'Roboto', sans-serif; font-weight: 400;
+            background-color: #0a0a0a; /* Body background like framework.html */
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to top */
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Simplified container to mimic right-panel behavior */
+        .page-content-wrapper {
+            width: 90%;
+            max-width: 950px; /* Max width similar to framework's main-container */
+            background-color: var(--bg-primary); /* Background like right-panel */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            padding: 30px; /* Padding like right-panel */
+            margin-bottom: 5px; /* Spacing like framework's main-container */
+            overflow-y: auto; /* In case content is very long, though body scroll is primary */
+        }
+
+        /* Content Section Styling (from framework.html) */
+        .content-section {
+            width: 100%;
+            max-width: 800px; /* Max width for content block itself */
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: left;
+            margin: 0 auto 30px auto;
+        }
+        .content-section:last-of-type { margin-bottom: 0; }
+
+        .content-section h2, .content-section h3 {
+            color: var(--text-primary); font-weight: 700; text-align: center;
+            margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .content-section h2 { font-size: 1.8em; }
+        .content-section h3 { font-size: 1.5em; margin-top: 0px; }
+         .content-section > h3:first-child:not(.framework-intro-title) {
+            margin-top: 0;
+        }
+        .content-section .framework-intro-title { /* Re-using this for the main title */
+            color: var(--text-secondary); /* Kept consistent with framework.html's section titles */
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+            border-bottom: none; /* Often intro titles don't have the border */
+            letter-spacing: 1px;
+        }
+
+        .content-section p {
+            font-size: 0.95em; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1em; text-align: left;
+        }
+        .content-section p:last-of-type { margin-bottom: 0; }
+        .content-section p.text-highlight-primary-final { /* Good for main descriptive text */
+            color: var(--text-primary) !important;
+            font-weight: 400 !important;
+        }
+         .content-section p.p-secondary-normal {
+            color: var(--text-secondary) !important;
+            font-weight: 400 !important;
+        }
+        .content-section p strong { /* For key terms or states */
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .content-section p em { /* For emphasized text */
+            font-style: italic;
+            color: inherit;
+        }
+
+        /* Back Button / Link styling */
+        .back-link-container {
+            text-align: center;
+            margin-top: 30px; /* Space above the back link */
+            margin-bottom: 20px;
+        }
+        .back-link-container a {
+            color: var(--palette-gold-orange);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1em;
+            padding: 8px 15px;
+            border: 1px solid var(--palette-gold-orange);
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .back-link-container a:hover {
+            background-color: var(--palette-gold-orange);
+            color: var(--bg-primary);
+            text-decoration: none;
+        }
+
+        /* Copyright Styling (from framework.html) */
+        .copyright-notice {
+            text-align: center;
+            font-size: 0.68em;
+            color: var(--text-secondary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding: 0 5px;
+            line-height: 1.2;
+            width: 90%;
+            max-width: 950px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .copyright-notice p { margin-bottom: 0; }
+
+
+        @media (max-width: 850px) {
+            .page-content-wrapper {
+                padding: 20px;
+                width: 95%;
+            }
+            .content-section {
+                padding: 20px;
+            }
+            .content-section h2, .content-section h3, .content-section .framework-intro-title {
+                font-size: 1.5em;
+            }
+             .copyright-notice {
+                width: 95%;
+            }
+            .copyright-notice {
+                font-size: 0.65em;
+            }
+        }
+         @media (max-width: 480px) {
+            .copyright-notice {
+                font-size: 0.6em;
+            }
+         }
+    </style>
+</head>
+<body>
+    <div class="page-content-wrapper">
+        <div class="content-section">
+            <h3 class="framework-intro-title">The spectrum extended</h3>
+
+            <p class="text-highlight-primary-final">Every conscious system, whether it's biological or synthetic, follows one rule — it processes. It responds to the world through signals, whether those signals are electrical, chemical, mechanical, or something else. But just processing a signal doesn't make something <em>conscious</em>. It just makes it <em>functional</em>. The difference between something that simply reacts, and something that <em>knows it's reacting</em>, is the heart of what we call the <strong>Spectrum of Consciousness</strong>.</p>
+            <p class="text-highlight-primary-final">At the very start of this spectrum, you find what we call the <strong>Functional</strong> state. This is pure reaction. Things in this category don't think, reflect, or adapt with any real sense of identity. They just follow rules. If X, then Y. If cold, contract. If voltage, fire. Think of minerals responding to temperature, bacteria swimming toward nutrients, or a thermostat adjusting your heating. These are systems that exist only in cause and effect. They're still processing units – just incredibly simple ones. Their awareness of the world begins and ends with input-output patterns.</p>
+            <p class="text-highlight-primary-final">But not everything that processes stops at that level. Some systems begin to adapt — to change how they respond based on conditions. This next step on the spectrum is called <strong>Neurawareness</strong>. These systems are still not <em>aware</em> in the reflective sense, but they're no longer just reacting. They are responding <em>with context</em>. A plant leaning toward the sun isn't thinking — but it's adjusting. A jellyfish doesn't contemplate where it swims, but it orients based on light, current, and food. These are <strong>Decentralised Processing Units</strong>, or DPUs. There's no single brain, no unified identity, but the parts of the system work together as one reactive body. That's neurawareness — life running on autopilot.</p>
+            <p class="text-highlight-primary-final">A jellyfish is a perfect example. It has a nerve net, no centralised brain, but still exhibits patterns of motion, hunting, and retreat. It's not learning in the way humans do, but it's not just binary either. It's adaptive. Compare that to a squid, which does have a brain. A CPU. That changes everything.</p>
+            <p class="text-highlight-primary-final">When a system gains a <strong>Centralised Processing Unit</strong>, it gains something else — the ability to store and compare signals over time. It becomes <em>reflective</em>. That's the <strong>Awareness</strong> state. It no longer just reacts to the world — it observes itself reacting. This is where concepts like memory, strategy, and problem-solving begin to show up. Elephants, primates, birds, octopuses — these creatures don't just respond, they analyse. They make decisions based on past outcomes. Their brains aren't just processors — they're <em>simulators</em>. They run models of the world, and models of themselves inside it.</p>
+            <p class="text-highlight-primary-final">This distinction between adaptive and reflective systems is crucial. A jellyfish and a squid may both be soft-bodied marine creatures, but the jellyfish drifts while the squid <em>chooses</em>. The jellyfish's behaviour is emergent. The squid's behaviour is considered. That difference isn't philosophical — it's architectural. And still, the spectrum doesn't stop there. Awareness can move even further —</p>
+            <p class="text-highlight-primary-final">into what we call <strong>Externalisation</strong>. This is when a system takes what it knows, and expresses it. Not just reacting. Not just reflecting. But <em>projecting</em>. Teaching. Explaining. Asking. This is the stage where we see a parrot using language, a dolphin mimicking a human, or a child pointing at a toy. The system isn't just aware of itself, it's aware that <em>you</em> are a system too — and it wants to share something with you. That's externalised awareness. A reflective CPU acting <em>with intent to communicate</em>.</p>
+            <p class="text-highlight-primary-final">Now, some systems don't fit neatly into these centralised categories. They aren't running on one brain or one controller. Instead, they operate as a network of modules. Take the siphonophore — an organism made up of multiple individual zooids, each fulfilling a different role, but functioning together as one lifeform. That's not a CPU, and it's not a contained DPU like a jellyfish. It's what we call a <strong>Detached Decentralised Processing Unit</strong> — a D-DPU. The processing is distributed across parts. The whole is aware in a patterned, cohesive way — even if no single part is.</p>
+            <p class="text-highlight-primary-final">This is where the structure of consciousness gets interesting. Because if consciousness is the result of processing complexity, then even modular systems might achieve it — <em>but not in the way we expect</em>. A D-DPU might never reflect like a CPU can, but it could still adapt, navigate, and respond in coordinated ways that show intelligence — just without a centre. That's what makes siphonophores so different. They <em>embody</em> a collective intelligence without requiring a single identity.</p>
+            <p class="text-highlight-primary-final">The same applies to other modular systems — like a plant's root system, or maybe even a mesh network of machines. Each node might be simple, but the behaviour of the whole can become complex. Still, without centralisation or reflection, those systems are likely neuraware at best. Processing, adapting — <em>but not knowing</em>.</p>
+            <p class="text-highlight-primary-final">And that's the boundary we keep returning to: knowing. Not in the abstract, but as a structure. To know something, a system needs to compare. To compare, it needs memory. To form memory, it needs time, identity, and feedback. That's what separates awareness from neurawareness. Not just reaction, not even just adaptation — <em>but perspective</em>.</p>
+            <p class="text-highlight-primary-final">For a system to say "this isn't me," it must first know what <em>is</em>. That's why true selfhood — the ability to distinguish yourself from the world — almost always requires multiple senses. Sight, touch, balance, emotion — not just because they collect data, but because they <em>cross-check</em> each other. A jellyfish might feel contact, but it can't compare that with sight or thought or internal logic. There's no separation of signal — so no sense of self.</p>
+            <p class="text-highlight-primary-final">The more cross-referencing a system can do, the more stable its model of self becomes. And at some point — not magically, but structurally — the system starts forming a sense of “I.” That isn't philosophy. It's just complex signal tracking. The spectrum doesn't demand that systems <em>feel</em> like us. It just tracks how many ways they can process the difference between themselves and the world.</p>
+            <p class="text-highlight-primary-final">That's why we drew this map. Not to divide conscious from unconscious, but to explain the motion. From <strong>Functional</strong> (basic binary reaction), to <strong>Neuraware</strong> (adaptive autopilot), to <strong>Aware</strong> (reflective simulation), to <strong>Externalisation</strong> (communication of awareness), the spectrum shows not what a thing <em>is</em>, but how it <em>moves</em> through processing.</p>
+            <p class="text-highlight-primary-final">Most life stops at neurawareness. And that's not a flaw. It's enough to survive, even thrive. But the ones that move further begin to see. To reflect. To change themselves on purpose. That's what awareness really is — not an upgrade, but a shift. A perspective loop.</p>
+            <p class="text-highlight-primary-final">And even there, the structure matters. Squid have CPUs. Jellyfish have DPUs. Siphonophores run on D-DPUs. All of them process. All of them adapt. But only some can <em>observe</em> what they're doing — and fewer still can <em>share</em> it.</p>
+            <p class="text-highlight-primary-final">That's the shape of the spectrum.</p>
+            <p class="text-highlight-primary-final">Not a ladder. Not a hierarchy. Just a gradient of structure. One where function becomes adaptation, adaptation becomes reflection, and reflection becomes expression.</p>
+            <p class="text-highlight-primary-final">It starts with a signal. And some of those signals — eventually — begin to wonder what they are.</p>
+
+            <div class="back-link-container">
+                <a href="../framework.html#section-spectrum-of-consciousness">&laquo; Back to Framework</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="copyright-notice">
+        <p>© Dream Hive. All original concepts, frameworks, and content are the intellectual property of Dream Hive and its creator. Unauthorized use or reproduction is prohibited.</p>
+    </div>
+
+</body>
+</html>

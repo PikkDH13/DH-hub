@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health - Framework</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base & Theme Variables (copied from framework.html) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #1a1a1a; --bg-secondary: #2c2c2c; --bg-tertiary: #3a3a3a;
+            --text-primary: #f0f0f0; --text-secondary: #a0a0a0; --text-terminal: #00e676;
+            --accent-green: #32CD32; --border-color: #444;
+            --list-hover-bg: #3f3f3f; --list-active-bg: #505050;
+            --header-orb-glow-color: rgba(173, 216, 230, 0.6);
+            --palette-gold-orange: #ffc793;
+            --highlight-orange: var(--palette-gold-orange);
+            --gnomon-portal-bg: #222;
+            --gnomon-portal-border: #555;
+        }
+        html { scroll-behavior: smooth; }
+        html, body { zoom: 1 !important; -webkit-text-size-adjust: 100% !important; text-size-adjust: 100% !important; }
+
+        body {
+            font-family: 'Roboto', sans-serif; font-weight: 400;
+            background-color: #0a0a0a; /* Body background like framework.html */
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to top */
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Simplified container to mimic right-panel behavior */
+        .page-content-wrapper {
+            width: 90%;
+            max-width: 950px; /* Max width similar to framework's main-container */
+            background-color: var(--bg-primary); /* Background like right-panel */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            padding: 30px; /* Padding like right-panel */
+            margin-bottom: 5px; /* Spacing like framework's main-container */
+            overflow-y: auto; /* In case content is very long, though body scroll is primary */
+        }
+
+        /* Content Section Styling (from framework.html) */
+        .content-section {
+            width: 100%;
+            max-width: 800px; /* Max width for content block itself */
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: left;
+            margin: 0 auto 30px auto;
+        }
+        .content-section:last-of-type { margin-bottom: 0; }
+
+        .content-section h2, .content-section h3 {
+            color: var(--text-primary); font-weight: 700; text-align: center;
+            margin-bottom: 25px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .content-section h2 { font-size: 1.8em; }
+        .content-section h3 { font-size: 1.5em; margin-top: 0px; }
+         .content-section > h3:first-child:not(.framework-intro-title) {
+            margin-top: 0;
+        }
+        .content-section .framework-intro-title { /* Re-using this for the main title */
+            color: var(--text-secondary); /* Kept consistent with framework.html's section titles */
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+            border-bottom: none; /* Often intro titles don't have the border */
+            letter-spacing: 1px;
+        }
+
+        .content-section p {
+            font-size: 0.95em; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1em; text-align: left;
+        }
+        .content-section p:last-of-type { margin-bottom: 0; }
+        .content-section p.text-highlight-primary-final { /* Good for main descriptive text */
+            color: var(--text-primary) !important;
+            font-weight: 400 !important;
+        }
+         .content-section p.p-secondary-normal {
+            color: var(--text-secondary) !important;
+            font-weight: 400 !important;
+        }
+        .content-section p strong { /* For key terms or Gnomon states */
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .content-section p em { /* For emphasized text */
+            font-style: italic;
+            color: inherit; 
+        }
+
+        /* Back Button / Link styling */
+        .back-link-container {
+            text-align: center;
+            margin-top: 30px; /* Space above the back link */
+            margin-bottom: 20px;
+        }
+        .back-link-container a {
+            color: var(--palette-gold-orange);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1em;
+            padding: 8px 15px;
+            border: 1px solid var(--palette-gold-orange);
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .back-link-container a:hover {
+            background-color: var(--palette-gold-orange);
+            color: var(--bg-primary);
+            text-decoration: none;
+        }
+
+        /* Copyright Styling (from framework.html) */
+        .copyright-notice {
+            text-align: center;
+            font-size: 0.68em;
+            color: var(--text-secondary);
+            margin-top: 0;
+            margin-bottom: 20px; 
+            padding: 0 5px;
+            line-height: 1.2;
+            width: 90%;
+            max-width: 950px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .copyright-notice p { margin-bottom: 0; }
+
+
+        @media (max-width: 850px) {
+            .page-content-wrapper {
+                padding: 20px;
+                width: 95%;
+            }
+            .content-section {
+                padding: 20px;
+            }
+            .content-section h2, .content-section h3, .content-section .framework-intro-title {
+                font-size: 1.5em;
+            }
+             .copyright-notice {
+                width: 95%;
+            }
+            .copyright-notice {
+                font-size: 0.65em;
+            }
+        }
+         @media (max-width: 480px) {
+            .copyright-notice {
+                font-size: 0.6em;
+            }
+         }
+    </style>
+</head>
+<body>
+    <div class="page-content-wrapper">
+        <div class="content-section">
+            <h3 class="framework-intro-title">Mental health</h3>
+
+            <p class="text-highlight-primary-final">Most people think mental health is about <em>what's wrong</em> with your mind. But the truth is, it's usually about what your mind had to do to keep you going when nothing else made sense. Anxiety, depression, burnout, dissociation—these aren't glitches. They're survival logic. They're the system protecting itself the best way it knows how with what it's been given.</p>
+            <p class="text-highlight-primary-final">And that's where we've been getting it wrong for years. We keep asking "what's wrong with me?” when the real question is “<em>what did I go through that made this response necessary?</em>" Because every so-called disorder has a shape. It has a motion. And if you can understand that motion, you start seeing that the behaviour you hate in yourself is often just your brain trying not to fall apart.</p>
+            <p class="text-highlight-primary-final">Gnomon looks at mental health differently. It doesn't start with symptoms. It starts with pressure. How much you took on. How long you carried it. Whether you were allowed to drop it. It reads the shape you had to take when you were under that pressure—whether you shut down, sped up, masked, lashed out, or just tried to disappear without dying.</p>
+            <p class="text-highlight-primary-final">Let's say you grew up in a loud, unpredictable house. Maybe someone's moods shifted like weather, maybe the rules changed depending on who was around. Your system's first job wasn't to express—it was to predict. So you learned to notice tone shifts before they turned into shouting. You watched people's faces to figure out if it was a good day or not. You adapted. And yeah, maybe now you overthink. Maybe now you scan every room for tension before you speak. But that isn't anxiety. That's what kept you safe. The pattern just never got told it could stop.</p>
+            <p class="text-highlight-primary-final">Or maybe you learned to perform. Not lie—just shape yourself into something people didn't reject. You became useful, funny, quiet, agreeable. Because when you showed your real self, it didn't go well. So now you're great at adapting, but you don't know what feels true anymore. That's the <strong>Madrigal</strong> state. Masked to survive. It works... until it doesn't. Until your brain gets tired of holding everything in. That's when it snaps. Not because you're weak, but because the mask got too heavy.</p>
+            <p class="text-highlight-primary-final">And then there's the burnout. The internal engine running on fumes. That moment where no matter how much sleep you get or how much time off you take, you still feel like something's dragging you under. That's <strong>Dynamo</strong>. That's a system moving too fast for too long. Maybe you call it ADHD. Maybe people said you're just “<em>too intense</em>.” But really, you just learned to run hot because stopping felt unsafe. Stillness meant you had to feel what you'd been dodging.</p>
+            <p class="text-highlight-primary-final">Some people don't get loud or restless. They go quiet. They vanish. That's <strong>Neophyte</strong>. Hollow. The system hits overload and instead of firing up, it powers down. You don't cry, you drift. You don't react, you stare. It looks like you're calm but inside, it's fog. That's not laziness. That's the body's emergency brake. The mind pulling you into a space where nothing can reach you, because everything already did.</p>
+            <p class="text-highlight-primary-final">And sometimes, you swing between them. One moment you're fine, the next you're crying over something small, the next you're flatlining. That doesn't mean you're broken. It means your system keeps flipping between states trying to find one that holds. Gnomon helps you track that motion. It gives shape to the chaos.</p>
+            <p class="text-highlight-primary-final">It also explains why people with deep shame often become the most forgiving. Why people who felt helpless become the most protective. Because the opposite of a wound often becomes the role we live in. The mind compensates in ways that don't always look obvious. Someone who's constantly joking might be carrying a storm. Someone who stays calm in conflict might have spent years learning how to freeze instead of fight.</p>
+            <p class="text-highlight-primary-final">And the reason this matters is because once you see the shape, you can stop blaming the reaction. You can stop treating it like a flaw. You can treat it like a signal. And from there, you can shift it. You can say, yeah, I understand why I do this—but I don't have to keep doing it now.</p>
+            <p class="text-highlight-primary-final">That same system also helps us understand some of the stranger, more misunderstood mental states. Dissociation. Absence seizures. Sudden emotional dropouts. Even comas. These aren't just “<em>brain glitches</em>." They might be emergency hollowing. The system recognising that something has gone too far, too fast—and cutting the signal before the damage spreads. When you see a person freeze in conversation, or phase out during stress, that might be their mind pulling them into a safer shape. One where they can still exist without shattering.</p>
+            <p class="text-highlight-primary-final">And yeah, some of this is still theory. But it fits. It fits the stories people tell when they don't feel like they're being watched. When they're not trying to tick boxes on a form. We've spoken to people who experience absence seizures who describe them as moments where the world blinks off and on again. That's not just random—it sounds like the system forcibly hollowing, resetting itself when it can't keep up.</p>
+            <p class="text-highlight-primary-final">That's why we're pushing this further. We're not just trying to explain mental health. We're trying to test these patterns. We want to learn from people who've lived it—from those with epilepsy, with dissociative disorders, with long-term depressive cycles. We want to know if this model feels right to them. Not as diagnosis. But as recognition. We want to run deeper research into whether comas can be “<strong>tethered</strong>”—whether there's a way to help the mind find enough stability to reconnect. We want to design hollowing courses, not for people who are broken, but for those who want to face their own patterns without exploding.</p>
+            <p class="text-highlight-primary-final">Because once we understand how people act under pressure, we stop asking them to just be better. We start asking what they needed when things got worse.</p>
+            <p class="text-highlight-primary-final">And maybe that's how we finally get mental health to a place where people feel understood before they feel fixed. Where they feel recognised before they feel rewired.</p>
+            <p class="text-highlight-primary-final">We're not there yet. But this is where it starts.</p>
+
+            <div class="back-link-container">
+                <a href="../framework.html#section-future-ethics-and-morality">&laquo; Back to Framework</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="copyright-notice">
+        <p>© Dream Hive. All original concepts, frameworks, and content are the intellectual property of Dream Hive and its creator. Unauthorized use or reproduction is prohibited.</p>
+    </div>
+
+</body>
+</html>
