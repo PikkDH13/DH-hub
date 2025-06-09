@@ -528,7 +528,7 @@
             border: none !important; 
             overflow: hidden; 
         }
-        #wiki-the-thread-section { /* Specific for link overlays */
+        #wiki-the-thread-section { 
             position: relative; 
         }
 
@@ -549,27 +549,27 @@
         .thread-link {
             position: absolute;
             display: block;
-            background-color: rgba(255, 0, 0, 0); /* Transparent, use 0.3 for debugging */
+            background-color: rgba(255, 0, 0, 0); /* Transparent, use 0.1 for debugging hover */
             cursor: pointer;
-            z-index: 2;
-            border-radius: 12px; /* Approximate from image */
+            z-index: 2; /* Ensure links are above the main image */
+            border-radius: 12px; 
             transition: background-color 0.15s ease-in-out;
         }
         .thread-link:hover {
-            background-color: rgba(255, 255, 255, 0.1); /* Subtle hover feedback */
+            background-color: rgba(255, 255, 255, 0.1); 
         }
-        /* Fine-tune these percentages based on the image's actual rendering */
-        #thread-link-suno {
-            top: 33.5%; left: 18.5%; width: 29.5%; height: 16.5%;
+        /* Adjusted percentages for better alignment */
+        #thread-link-suno { /* Top-left */
+            top: 34.2%; left: 19%; width: 29.5%; height: 16.5%;
         }
-        #thread-link-discord {
-            top: 33.5%; left: 52%; width: 29.5%; height: 16.5%;
+        #thread-link-discord { /* Top-right */
+            top: 34.2%; left: 51.5%; width: 29.5%; height: 16.5%;
         }
-        #thread-link-archetype-test {
-            top: 59%; left: 18.5%; width: 29.5%; height: 16.5%;
+        #thread-link-archetype-test { /* Bottom-left */
+            top: 59.7%; left: 19%; width: 29.5%; height: 16.5%;
         }
-        #thread-link-logic-test {
-            top: 59%; left: 52%; width: 29.5%; height: 16.5%;
+        #thread-link-logic-test { /* Bottom-right */
+            top: 59.7%; left: 51.5%; width: 29.5%; height: 16.5%;
         }
 
 
@@ -631,24 +631,37 @@
 
         #gnomon-content > .legend-section { width: 100%; box-sizing: border-box; align-self: auto; }
         #gnomon-wheel-section {
-            position: relative;
+            position: relative; /* Ensure this is positioned for z-index stacking */
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 25px 10px;
-            overflow: visible;
+            padding: 25px 10px; /* Or adjust as needed if bg image needs more/less space */
+            overflow: hidden; /* Important if bg image might exceed bounds */
             margin-bottom: 10px;
+            border-radius: 6px; /* To match .legend-section, applied to image too */
         }
-        #gnomon-wheel-info-message {
-            color: var(--text-secondary);
-            font-size: 0.85em;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-style: italic;
+        #gnomon-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            z-index: 0; /* Behind the SVG */
+            border-radius: inherit; /* Inherit from #gnomon-wheel-section */
+            opacity: 0.8; /* Optional: if you want it slightly faded */
         }
-        #interactive-circle { display: block; max-width: 100%; width: 550px; height: auto; overflow: visible; }
+        #interactive-circle { 
+            display: block; 
+            max-width: 100%; 
+            width: 550px; 
+            height: auto; 
+            overflow: visible;
+            position: relative; /* To ensure it's above the background image */
+            z-index: 1;
+            background-color: transparent; /* Ensure SVG itself is transparent */
+        }
+
         #interactive-circle .segment { stroke: var(--gnomon-segment-stroke); stroke-width: 1px; cursor: pointer; transition: fill 0.2s ease-in-out, stroke 0.2s, stroke-width 0.2s, transform 0.2s ease-out, filter 0.2s ease-in-out; transform-origin: 0 0; filter: brightness(1); }
         #interactive-circle .segment.search-highlighted {
           filter: brightness(70%) !important;
@@ -676,6 +689,15 @@
             letter-spacing: 0.8px;
             pointer-events: none;
             transition: fill 0.2s ease-in-out;
+        }
+        #gnomon-wheel-info-message {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            text-align: center;
+            margin-top: 0; /* Adjusted because wheel section has padding now */
+            margin-bottom: 20px;
+            font-style: italic;
+            width: 100%;
         }
 
         #health-bar-bg, #health-bar-fill {
@@ -717,7 +739,7 @@
         #gnomon-description-box #gnomon-desc-title { margin-top: 0; color: var(--text-primary); padding-bottom: 0; margin-bottom: 0; font-size: 0.95em; }
 
         #gnomon-state-profile {
-            margin-top: 0px;
+            margin-top: 0px; /* Adjusted from 10px */
             margin-bottom: 0;
             padding: 25px;
             background-color: var(--bg-secondary);
@@ -834,7 +856,7 @@
 
 
             #core-details-content, #archetype-legend-content, #gnomon-content { max-width: none; }
-            .legend-section { max-width: none; } /* This ensures full-width image sections */
+            .legend-section { max-width: none; } 
 
             #interactive-circle { width: 90%; max-width: 500px; }
             .nav-button { flex-grow: 0;}
@@ -842,7 +864,7 @@
             hr.left-panel-divider { margin-bottom: 10px; }
             .header-orb { width: 80px; height: 80px; }
             #gnomon-description-box { max-width: 250px; }
-            #gnomon-wheel-section { margin-bottom: 10px; }
+            #gnomon-wheel-section { margin-bottom: 10px; padding: 15px 5px;}
             #gnomon-wheel-info-message { margin-bottom: 15px; }
 
 
@@ -868,10 +890,10 @@
                 font-size: 0.65em;
                 margin-bottom: 10px;
             }
+             .thread-link { border-radius: 8px; } /* Slightly smaller radius for smaller screens */
         }
 
         @media (max-width: 650px) {
-            /* .legend-section { padding: 20px; margin-bottom: 20px;} */ 
             #interactive-circle { width: 95%; max-width: 450px; }
 
             #core-details-content .stat-item { flex-wrap: wrap; font-size: 0.9em; gap: 5px; }
@@ -881,7 +903,7 @@
             #left-panel-orb-area { min-height: 80px;}
             .header-orb { width: 70px; height: 70px; }
             #gnomon-description-box { padding: 8px 12px; }
-            #gnomon-wheel-section { margin-bottom: 10px; }
+            #gnomon-wheel-section { margin-bottom: 10px; padding: 10px; }
             #gnomon-wheel-info-message { margin-bottom: 10px; font-size: 0.8em; }
             #core-details-content .profile-columns { padding: 10px; }
             #core-details-content .profile-column.left { padding-bottom: 10px; }
@@ -894,6 +916,7 @@
             }
             #core-audio-preview { width: 90%; }
             #gnomon-scroll-lock-container { top: 5px; right: 5px; }
+            .thread-link { border-radius: 6px; }
         }
 
         @media (max-width: 480px) {
@@ -915,7 +938,6 @@
 
 
             .right-panel { padding: 15px 10px; }
-            /* .legend-section { padding: 15px; margin-bottom: 15px;} */
 
             #core-details-content .core-orb-display-area { width: 130px; height: auto; padding-bottom:10px; }
             #core-details-content .core-orb-image { max-width: 120px; height: 120px;}
@@ -929,7 +951,7 @@
             #gnomon-state-profile #gnomon-profile-description { font-size: 0.85em; }
             #core-description-section { padding: 15px; margin-top: 20px;}
             #core-description-section p { font-size: 0.85em; }
-            #gnomon-wheel-section { margin-bottom: 10px; }
+            #gnomon-wheel-section { margin-bottom: 10px; padding: 5px;}
             #gnomon-wheel-info-message { margin-bottom: 10px; font-size: 0.8em;}
             #core-audio-preview { width: 95%; height: 28px;}
             .copyright-notice {
@@ -938,6 +960,7 @@
             .p-primary-white {
               color: white;
             }
+            .thread-link { border-radius: 4px; } 
         }
     </style>
 </head>
@@ -1034,8 +1057,8 @@
                         <img src="images/wiki-the-thread.png" alt="Dream Hive The Thread Links Graphic">
                         <a href="https://suno.com/@dreamh13" class="thread-link" id="thread-link-suno" target="_blank" rel="noopener noreferrer" title="Dream Hive Suno"></a>
                         <a href="https://discord.gg/mjDfzs8S" class="thread-link" id="thread-link-discord" target="_blank" rel="noopener noreferrer" title="Dream Hive Discord"></a>
-                        <a href="archetype-test-section-placeholder" class="thread-link" id="thread-link-archetype-test" target="_blank" rel="noopener noreferrer" title="Archetype Test (Placeholder)"></a>
-                        <a href="pages/questionnaire.html" class="thread-link" id="thread-link-logic-test" target="_blank" rel="noopener noreferrer" title="Logic Test (Placeholder)"></a>
+                        <a href="archetype-test-section-placeholder" class="thread-link" id="thread-link-archetype-test" target="_blank" rel="noopener noreferrer" title="Archetype Test"></a>
+                        <a href="pages/questionnaire.html" class="thread-link" id="thread-link-logic-test" title="Logic Test"></a>
                     </div>
                 </div>
 
@@ -1051,6 +1074,7 @@
                         </button>
                     </div>
                      <div class="legend-section" id="gnomon-wheel-section">
+                         <img src="images/wiki-gnomon-bg.png" alt="Gnomon Background" id="gnomon-bg-image">
                          <svg id="interactive-circle" viewBox="-160 -160 320 320">
                              <defs> <radialGradient id="anomalyGradient" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="115" fx="0" fy="0"> <stop offset="0%" stop-color="var(--gradient-inner-color)" stop-opacity="1"/> <stop id="anomalyStopOuter" offset="100%" stop-color="var(--palette-anomaly)" stop-opacity="1"/> </radialGradient> <radialGradient id="unstableGradient" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="115" fx="0" fy="0"> <stop offset="0%" stop-color="var(--gradient-inner-color)" stop-opacity="1"/> <stop id="unstableStopOuter" offset="100%" stop-color="var(--palette-unstable)" stop-opacity="1"/> </radialGradient> <radialGradient id="dynamicGradient" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="115" fx="0" fy="0"> <stop offset="0%" stop-color="var(--gradient-inner-color)" stop-opacity="1"/> <stop id="dynamicStopOuter" offset="100%" stop-color="var(--palette-dynamic)" stop-opacity="1"/> </radialGradient> <radialGradient id="stableGradient" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="115" fx="0" fy="0"> <stop offset="0%" stop-color="var(--gradient-inner-color)" stop-opacity="1"/> <stop id="stableStopOuter" offset="100%" stop-color="var(--palette-stable)" stop-opacity="1"/> </radialGradient> <radialGradient id="innerShadowGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"> <stop offset="50%" stop-color="rgba(0,0,0,0)" /> <stop offset="100%" stop-color="rgba(0,0,0,0.5)" /> </radialGradient> <clipPath id="clipPathUnstable"> <path id="clipPathUnstableArc" fill="none" stroke="white" stroke-width="var(--health-bar-stroke-width)"/> </clipPath> <clipPath id="clipPathDynamic"> <path id="clipPathDynamicArc" fill="none" stroke="white" stroke-width="var(--health-bar-stroke-width)"/> </clipPath> <clipPath id="clipPathStable"> <path id="clipPathStableArc" fill="none" stroke="white" stroke-width="var(--health-bar-stroke-width)"/> </clipPath> </defs> <path id="health-bar-bg" d="" /> <path id="health-bar-fill" d="" /> <path id="health-bar-anim-unstable" class="health-blob-animation" clip-path="url(#clipPathUnstable)" /> <path id="health-bar-anim-dynamic"  class="health-blob-animation" clip-path="url(#clipPathDynamic)" /> <path id="health-bar-anim-stable"   class="health-blob-animation" clip-path="url(#clipPathStable)" /> <g id="circle-segments"></g> <g id="image-placeholders"></g> <g id="circle-text"></g> <g id="center-element" class="center-interactive" data-segment-id="15"> <defs> <path id="centerTextCurve" d="M -19 -2 A 19 19 0 0 1 19 -2" fill="none" stroke="none"/> <path id="centerClickMeTextCurve" d="M -22 7 A 22 19 0 0 0 22 7" fill="none" stroke="none"/> </defs> <circle id="center-circle-bg" cx="0" cy="0" r="35" /> <circle id="gnomon-center-inner-shadow" cx="0" cy="0" r="35" /> <image id="center-sovereign-image" xlink:href="images/sovereign-icon.png" x="-15" y="-15" width="30" height="30" visibility="visible" /> <image id="center-maverick-image" xlink:href="images/maverick-icon.png" x="-15" y="-15" width="30" height="30" visibility="hidden" /> <circle id="center-circle-fg" cx="0" cy="0" r="35" /> <text class="center-curved-text-style" id="center-label-text-element"> <textPath id="center-curved-text-content" xlink:href="#centerTextCurve" startOffset="50%" >Sovereign</textPath> </text> <text class="center-curved-text-style" id="center-clickme-text-element"> <textPath id="center-click-me-text-path" xlink:href="#centerClickMeTextCurve" startOffset="50%">click me</textPath> </text> <title>Center Area</title> </g>
                          </svg>
@@ -1075,7 +1099,7 @@
             <p>© Dream Hive. All original concepts, frameworks, and content are the intellectual property of Dream Hive and its creator. Unauthorized use or reproduction is prohibited.</p>
         </div>
         <div class="external-link-footer">
-            <p><a href="framework.html" class="footer-link-glow">Click to visit the framework</a></p>
+            <p><a href="framework.html" class="footer-link-glow">Click to visit the framework (coming soon)</a></p>
         </div>
         <!-- Footer and Copyright Notice END -->
     </div> <!-- End of #main-content-wrapper -->
@@ -1281,24 +1305,38 @@
                 if (!initialMessage || !coreDetailsContent || !archetypeLegendContent || !gnomonContent || !searchBar || !coreListContainer || !navCodexBtn || !navGnomonBtn || !navWikiBtn) { console.error("showView: Critical elements missing."); return; }
                 initialMessage.classList.remove('visible'); coreDetailsContent.classList.remove('visible'); archetypeLegendContent.classList.remove('visible'); gnomonContent.classList.remove('visible'); gnomonContent.style.display = 'none'; if(gnomonStateProfile) gnomonStateProfile.style.display = 'none';
                 searchBar.classList.add('hidden'); coreListContainer.style.display = 'none';
-                if (wikiSearchBar) wikiSearchBar.classList.add('hidden'); if (gnomonSearchBar) gnomonSearchBar.classList.add('hidden'); if (wikiNavIndexContainer) wikiNavIndexContainer.classList.add('hidden'); if (gnomonNavIndexContainer) gnomonNavIndexContainer.classList.add('hidden');
+                
+                // Always hide all specific search bars and navs initially
+                if (wikiSearchBar) wikiSearchBar.classList.add('hidden'); 
+                if (gnomonSearchBar) gnomonSearchBar.classList.add('hidden'); 
+                if (wikiNavIndexContainer) wikiNavIndexContainer.classList.add('hidden'); 
+                if (gnomonNavIndexContainer) gnomonNavIndexContainer.classList.add('hidden');
+
                 [headerCodexOrb, headerWikiOrb, headerGnomonOrb].forEach(orb => { if (orb) { orb.classList.add('hidden'); orb.classList.remove('header-orb-active'); } });
                 let activeOrb = null;
 
                 if (viewToShow === 'wiki') {
                     archetypeLegendContent.classList.add('visible'); setActiveNavButton(navWikiBtn); activeOrb = headerWikiOrb;
-                    if (wikiSearchBar) wikiSearchBar.classList.remove('hidden'); if (wikiNavIndexContainer) wikiNavIndexContainer.classList.remove('hidden');
+                    // Wiki search bar remains hidden as per new requirement
+                    if (wikiNavIndexContainer) wikiNavIndexContainer.classList.remove('hidden'); // Show wiki nav
                     setupWikiNav(); 
                     updateWikiNavActiveState(); 
                 } else if (viewToShow === 'gnomon') {
                     gnomonContent.classList.add('visible'); gnomonContent.style.display = 'flex'; setActiveNavButton(navGnomonBtn); activeOrb = headerGnomonOrb;
-                    if (gnomonNavIndexContainer) gnomonNavIndexContainer.classList.remove('hidden');
+                    if (gnomonNavIndexContainer) gnomonNavIndexContainer.classList.remove('hidden'); // Show Gnomon nav
+                    // Gnomon search bar remains hidden
                     if (!gnomonInitialized) { initializeGnomon(); gnomonInitialized = true; }
                     requestAnimationFrame(() => { if (gnomonContent) gnomonContentRect = gnomonContent.getBoundingClientRect(); });
                     if (gnomonInitialized && healthBarFillPath && document.body.contains(healthBarFillPath)) { requestAnimationFrame(() => { if (document.body.contains(healthBarFillPath)) { healthBarFillPath.style.stroke = 'var(--text-primary)'; healthBarFillPath.style.transition = 'none'; healthBarFillPath.style.strokeDashoffset = healthBarTotalLength > 0 ? healthBarTotalLength : '0'; } }); }
                     if (gnomonStateProfile) gnomonStateProfile.style.display = 'none'; updateGnomonNavActiveState(null, false);
                 } else { // Codex view
                     searchBar.classList.remove('hidden'); coreListContainer.style.display = 'block'; setActiveNavButton(navCodexBtn); activeOrb = headerCodexOrb;
+                    // Ensure other specific search/navs are hidden
+                    if (wikiSearchBar) wikiSearchBar.classList.add('hidden');
+                    if (wikiNavIndexContainer) wikiNavIndexContainer.classList.add('hidden');
+                    if (gnomonSearchBar) gnomonSearchBar.classList.add('hidden');
+                    if (gnomonNavIndexContainer) gnomonNavIndexContainer.classList.add('hidden');
+
                     if (currentActiveButton && coresData.find(c => c.id === currentActiveButton.dataset.coreId)) { displayCoreDetails(coresData.find(c => c.id === currentActiveButton.dataset.coreId)); }
                     else if (coresData.length > 0) { const lexiCore = coresData.find(c => c.name === "Lexi") || coresData[0]; const coreButton = coreListContainer ? Array.from(coreListContainer.querySelectorAll('button')).find(b => b.dataset.coreId === lexiCore.id) : null; if (coreButton) { setActiveListItem(coreButton); displayCoreDetails(lexiCore); } else { clearCoreDetails(); initialMessage.textContent = "Select a Core Signal..."; initialMessage.classList.add('visible'); }
                     } else { clearCoreDetails(); initialMessage.textContent = "No Cores available."; initialMessage.classList.add('visible'); }
@@ -1483,8 +1521,7 @@
                 if (!rightPanel) return;
 
                 links.forEach(link => {
-                    // Remove existing listener to prevent duplicates if called multiple times
-                    link.removeEventListener('click', handleWikiNavLinkClick);
+                    link.removeEventListener('click', handleWikiNavLinkClick); // Prevent multiple listeners
                     link.addEventListener('click', handleWikiNavLinkClick);
                 });
                 
@@ -1498,13 +1535,13 @@
                 const targetSection = document.getElementById(targetId);
                 const rightPanel = document.querySelector('.right-panel');
                 if (targetSection && rightPanel) {
+                    // Scroll the target section to the top of the rightPanel's viewport
                     rightPanel.scrollTo({ top: targetSection.offsetTop, behavior: 'smooth' });
                 }
                 if (leftPanelElement && leftPanelElement.classList.contains('mobile-menu-open') && window.innerWidth <= 850) { 
                     handleMobileMenuToggle(); 
                 }
             }
-
 
             function updateWikiNavActiveState() {
                 if (!archetypeLegendContent.classList.contains('visible') || !wikiSectionLinksList) return;
@@ -1513,17 +1550,17 @@
 
                 let activeSectionId = null;
                 const scrollPosition = rightPanel.scrollTop;
-                // Activation point slightly below the top of the right panel viewport to feel more natural
-                const activationPoint = scrollPosition + (rightPanel.clientHeight * 0.1); 
+                const activationPoint = scrollPosition + (rightPanel.clientHeight * 0.15); // 15% into the viewport
 
                 const sections = Array.from(wikiSectionLinksList.querySelectorAll('a'))
                     .map(link => { 
                         const sectionId = link.getAttribute('href').substring(1); 
                         const sectionEl = document.getElementById(sectionId); 
+                        // Get offsetTop relative to the scrollable rightPanel
                         return sectionEl ? { id: sectionId, element: sectionEl, top: sectionEl.offsetTop } : null; 
                     })
                     .filter(s => s !== null)
-                    .sort((a, b) => a.top - b.top);
+                    .sort((a, b) => a.top - b.top); // Ensure sections are sorted by their appearance order
 
                 // Find the last section whose top is at or above the activation point
                 for (let i = sections.length - 1; i >= 0; i--) {
@@ -1532,12 +1569,15 @@
                         break;
                     }
                 }
-                // If no section is above (e.g., scrolled to top or few sections), or if at bottom, adjust
+                // If no section is "above" the activation point (e.g., scrolled near the top, or very few sections)
+                // default to the first section if its top is within the viewport or above.
                 if (!activeSectionId && sections.length > 0) {
-                    activeSectionId = sections[0].id; // Default to first if nothing else matches
+                    if (sections[0].top <= scrollPosition + rightPanel.clientHeight) { // Check if first section is at all visible
+                         activeSectionId = sections[0].id;
+                    }
                 }
                 // If scrolled to the very bottom, make the last section active
-                if ((rightPanel.scrollTop + rightPanel.clientHeight) >= (rightPanel.scrollHeight - 20) && sections.length > 0) { // 20px tolerance
+                if ((rightPanel.scrollTop + rightPanel.clientHeight) >= (rightPanel.scrollHeight - 20) && sections.length > 0) { // 20px tolerance for bottom
                     activeSectionId = sections[sections.length - 1].id;
                 }
                 
@@ -1547,8 +1587,8 @@
                     if (isActive && wikiNavIndexContainer && !wikiNavIndexContainer.classList.contains('hidden') && link.offsetParent) {
                         const linkRect = link.getBoundingClientRect(); 
                         const containerRect = wikiNavIndexContainer.getBoundingClientRect();
-                        if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
-                            link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) { // If not fully visible in nav
+                            link.scrollIntoView({ behavior: 'auto', block: 'nearest' }); // 'auto' for less jarring scroll
                         }
                     }
                 });
