@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Blueprint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Scripts for the new Archive Page -->
+    <!-- This MUST be the first script to create the 'bookshelf' -->
+    <script> const ARCHIVE_CONTENT = {}; </script>
+    
+    <!-- Load the 'table of contents' and then all the 'books' -->
+    <script src="archive_manifest.js"></script>
+    <script src="archive/bab1/99or911.js"></script>
+    <!-- Add your other content .js files here as you create them -->
+
+    <style>
+        /* --- Base & Theme Variables --- */
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #44aaff; 
+            --accent-blue-link: #77ccff;
+            --accent-blue-deep: #2288ee;
+            --border-color: #333;
+            --tag-bg: #4a4a4a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* --- Dynamic Background (Used by GRadio) --- */
+        #dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100vh;
+            z-index: -1;
+            background-size: cover;
+            background-position: center center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            -webkit-mask-image: linear-gradient(to right, transparent 5%, black 40%);
+            mask-image: linear-gradient(to right, transparent 5%, black 40%);
+        }
+
+        /* --- Header / Top Navigation --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; height: 70px; background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color); width: 100%;
+            flex-shrink: 0; z-index: 10;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .logo { font-size: 2em; font-weight: 700; color: var(--accent-blue); text-decoration: none; cursor: pointer; text-shadow: 0 0 5px rgba(68,170,255,0.5); }
+        .header-right { display: flex; align-items: center; gap: 50px; }
+        nav.main-nav { display: flex; gap: 50px; }
+        nav.main-nav a {
+            color: var(--text-secondary); text-decoration: none; font-size: 1.1em;
+            padding: 24px 0; border-bottom: 3px solid transparent;
+            transition: color 0.2s, border-color 0.2s; cursor: pointer;
+        }
+        nav.main-nav a:hover { color: var(--text-primary); }
+        nav.main-nav a.active { color: var(--text-primary); font-weight: 700; border-bottom-color: var(--accent-blue); }
+        .login-btn {
+            border: 1px solid var(--accent-blue); color: var(--accent-blue);
+            background: none; padding: 8px 20px; border-radius: 20px;
+            cursor: pointer; font-weight: 700; transition: all 0.2s;
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 8px rgba(68,170,255,0.4); }
+            to { box-shadow: 0 0 16px rgba(68,170,255,0.7); }
+        }
+        .login-btn:hover { background-color: var(--accent-blue); color: var(--bg-primary); animation: none; box-shadow: 0 0 15px rgba(68,170,255,0.8); }
+
+        .logo.failsafe-active {
+            animation: failsafe-pulse 2s infinite alternate ease-in-out;
+        }
+        @keyframes failsafe-pulse {
+            from {
+                color: #900;
+                text-shadow: 0 0 10px #ff0000, 0 0 15px #ff0000;
+            }
+            to {
+                color: #121212;
+                text-shadow: none;
+            }
+        }
+
+        /* --- Main Content Area --- */
+        .page-content { flex-grow: 1; overflow: hidden; position: relative; }
+        #hive-page { display: none; width: 100%; }
+        #home-page { display: none; width: 100%; }
+        
+        /* --- Gnomon Radio Page & Wheel Styling --- */
+        #gnomon-radio-page {
+            display: none;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto Mono', monospace;
+            background-image: linear-gradient(rgba(18,18,18,0.85), rgba(18,18,18,0.85)), 
+                              url('images/fgradiobg.png');
+            background-size: cover;
+            background-position: center calc(50% + 10px);
+            background-attachment: fixed;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .gnomon-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gnomon-wheel-svg {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: 550px;
+            height: auto;
+            overflow: visible;
+            filter: drop-shadow(0 0 30px rgba(68, 170, 255, 0.5));
+            transition: filter 0.5s ease-in-out;
+        }
+
+        #gnomon-wheel-svg.failsafe-glow {
+            filter: drop-shadow(0 0 40px rgba(255, 0, 0, 0.8));
+        }
+        
+        #gnomon-wheel-svg.failsafe-active .segment {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        #gnomon-wheel-svg .segment, #gnomon-wheel-svg #center-circle-bg {
+            stroke: #000;
+            stroke-width: 1.5px;
+            transition: fill 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        #gnomon-wheel-svg .segment-text, #gnomon-wheel-svg .center-curved-text-style {
+            fill: var(--text-primary);
+            font-size: 8px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            transition: fill 0.2s ease-in-out;
+        }
+        #gnomon-wheel-svg .center-curved-text-style {
+             font-size: 8px;
+        }
+        #gnomon-wheel-svg g:hover .center-curved-text-style {
+            fill: #000;
+        }
+
+        #gnomon-wheel-svg .image-placeholder {
+            opacity: 0.7;
+            pointer-events: none;
+            animation: symbol-pulse 7s infinite ease-in-out;
+        }
+
+        @keyframes symbol-pulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 2px rgba(119,204,255,0));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 8px var(--accent-blue-link));
+                transform: scale(1.05);
+            }
+        }
+        
+        #center-element.failsafe-active #center-circle-bg {
+            fill: #900;
+            stroke: #ff0000;
+        }
+        #center-element.failsafe-active .center-curved-text-style {
+            animation: failsafe-text-pulse 1.5s infinite alternate ease-in-out;
+        }
+        @keyframes failsafe-text-pulse {
+            from { fill: #121212; letter-spacing: 1px; }
+            to { fill: #ff0000; text-shadow: 0 0 8px #ff0000; letter-spacing: 2px;}
+        }
+
+
+        /* --- Welcome & Chatbox Styling --- */
+        #welcome-container, #chat-container {
+            width: 300px;
+            height: 80vh;
+            max-height: 600px;
+            background-color: rgba(18, 18, 18, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+            flex-shrink: 0;
+        }
+
+        #welcome-container {
+            padding: 25px 25px 25px 25px;
+            justify-content: flex-start;
+        }
+        #welcome-container h3 {
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            font-size: 1.5em;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #welcome-container p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+         #welcome-container p:not(:last-child) {
+            margin-bottom: 15px;
+        }
+        
+        #welcome-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            align-self: center;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.8em;
+            align-items: center;
+        }
+        #welcome-toggle .toggle-icon {
+            margin-left: 8px;
+            font-weight: bold;
+        }
+
+        #chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        #chat-messages::-webkit-scrollbar { width: 4px; }
+        #chat-messages::-webkit-scrollbar-thumb { background-color: var(--bg-tertiary); }
+
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .chat-username {
+            font-weight: 700;
+            color: var(--accent-blue-link);
+            margin-right: 8px;
+        }
+        .chat-text {
+            color: var(--text-secondary);
+        }
+
+        #chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        #chat-input {
+            flex-grow: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            margin-right: 10px;
+        }
+        #chat-input:focus {
+            outline: 1px solid var(--accent-blue);
+        }
+        #chat-send-btn {
+            background-color: var(--accent-blue);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        /* --- Home Page Specific Styles --- */
+        #home-page {
+            overflow-y: auto;
+            padding: 50px 40px;
+            background-image: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), url('images/fhomebg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .home-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+        }
+        
+        .home-video-section {
+            background-color: #000;
+            padding: 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            height: 60vh;
+        }
+        .home-video-section video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .home-intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .home-intro-text p {
+            font-size: 1.4em;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 1.5em;
+        }
+
+        .home-intro-text .orange-text {
+            color: var(--accent-blue);
+            font-weight: 700;
+            font-size: 2.5em;
+        }
+        
+        .home-container a {
+            color: var(--accent-blue-link);
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .home-container a:hover {
+            text-decoration: underline;
+        }
+
+        .home-section {
+            background-color: transparent;
+            padding: 0 60px;
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+        .home-section:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .home-section-text {
+            flex: 1;
+        }
+        
+        .home-section-placeholder {
+            flex: 1;
+            max-width: 400px;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            background-size: cover;
+            background-position: center;
+        }
+
+        #what-to-do-section .home-section-placeholder {
+            max-width: 320px;
+            aspect-ratio: 3 / 4.5;
+            background-color: var(--bg-tertiary);
+        }
+        
+        #g-type-quiz-section .home-section-placeholder,
+        #gnomon-radio-section .home-section-placeholder {
+            background-color: transparent;
+             -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+            mask-image: radial-gradient(ellipse at center, black 50%, transparent 85%);
+        }
+
+        .home-section h2 {
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .home-section p {
+            color: var(--text-secondary);
+            font-size: 1.2em;
+            line-height: 1.7;
+        }
+        .home-section-text p:not(:last-child) {
+            margin-bottom: 1.5em;
+        }
+
+        /* --- New Archive Page (s3) Specific Styles --- */
+        #hive-page .left-panel { 
+            width: 240px; 
+            background-color: var(--bg-secondary); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px; 
+            border-right: 1px solid var(--border-color); 
+            flex-shrink: 0; 
+        }
+        #hive-page .category-list-wrapper { 
+            overflow-y: auto; 
+            flex-grow: 1; 
+        }
+        #hive-page .category-list-wrapper::-webkit-scrollbar { 
+            width: 4px; 
+        }
+        #hive-page .category-list-wrapper::-webkit-scrollbar-thumb { 
+            background-color: var(--bg-tertiary); 
+        }
+        #hive-page .category-list { 
+            list-style: none; 
+        }
+        #hive-page .category-list-item button { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 1.1em; 
+            color: var(--text-secondary); 
+            text-align: left; 
+            background: transparent; 
+            border: none; 
+            border-bottom: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: color 0.2s, background-color 0.2s; 
+        }
+        #hive-page .category-list-item button:hover { 
+            color: var(--text-primary); 
+        }
+        #hive-page .category-list-item.active button { 
+            background-image: linear-gradient(to bottom, var(--accent-blue), var(--accent-blue-deep)); 
+            color: var(--bg-primary); 
+            font-weight: 700; 
+        }
+        #hive-page .right-panel { 
+            flex-grow: 1; 
+            padding: 50px; 
+            overflow-y: auto; 
+        }
+        #hive-page .right-panel::-webkit-scrollbar { 
+            width: 6px; 
+        }
+        #hive-page .right-panel::-webkit-scrollbar-thumb { 
+            background-color: #444; 
+        }
+        #archive-content-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            color: var(--text-secondary); 
+        }
+        #archive-content-container h2 { 
+            font-size: 2.5em; 
+            color: var(--text-primary); 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 20px; 
+        }
+        .archive-entry details { 
+            margin-bottom: 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            background-color: var(--bg-secondary); 
+        }
+        .archive-entry summary { 
+            padding: 15px 20px; 
+            font-size: 1.2em; 
+            font-weight: 700; 
+            color: var(--accent-blue-link); 
+            cursor: pointer; 
+            outline: none; 
+            list-style: none; 
+        }
+        .archive-entry summary::-webkit-details-marker { 
+            display: none; 
+        }
+        .archive-entry summary:hover { 
+            background-color: var(--bg-tertiary); 
+        }
+        .archive-document-content { 
+            padding: 0 20px 20px 20px; 
+            line-height: 1.7; 
+            white-space: pre-wrap; 
+            font-family: 'Roboto', sans-serif; 
+            font-size: 1.1em; 
+        }
+
+
+        /* --- Footer --- */
+        footer {
+            text-align: center; padding: 15px 40px; height: 50px; background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.9em;
+            width: 100%; flex-shrink: 0; z-index: 5; transition: opacity 0.3s;
+        }
+        footer.hidden { opacity: 0; pointer-events: none; }
+        
+        /* --- Persistent Player --- */
+        #persistent-player {
+            position: fixed; bottom: -70px; left: 0; width: 100%; height: 70px;
+            background-color: #181818; border-top: 1px solid var(--border-color); z-index: 20;
+            display: flex; align-items: center; padding: 0 20px; gap: 15px;
+            transition: bottom 0.3s ease-in-out;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+        }
+        #persistent-player.visible { bottom: 0; }
+        .player-track-info { display: flex; align-items: center; gap: 15px; min-width: 150px; width: 25%; }
+        .player-album-art {
+             width: 45px; height: 45px; background-color: #333;
+             background-size: cover; background-position: center; flex-shrink: 0;
+        }
+        .player-title-artist { overflow: hidden; }
+        .player-title-artist .title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .player-title-artist .artist { font-size: 0.9em; color: var(--text-secondary); }
+        .player-center-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; flex-grow: 1; }
+        .player-controls { display: flex; align-items: center; gap: 20px; }
+        .player-controls button { background: none; border: none; color: var(--text-primary); font-size: 1.5em; cursor: pointer; transition: color 0.2s, text-shadow 0.2s, opacity 0.2s; }
+        .player-controls button.active {
+            color: var(--accent-blue);
+            text-shadow: 0 0 8px var(--accent-blue);
+        }
+        .player-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: var(--text-secondary);
+            text-shadow: none;
+        }
+
+        .player-progress-container { display: flex; align-items: center; gap: 10px; width: 100%; }
+        #player-progress-bar.interactive { cursor: pointer; }
+
+        .player-volume { display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 25%; min-width: 150px; }
+        
+        .player-volume-btn {
+            background: none; border: none; padding: 0;
+            cursor: pointer; width: 24px; height: 24px;
+        }
+        .player-volume-btn svg {
+            width: 100%; height: 100%;
+            fill: var(--text-primary);
+            transition: fill 0.2s, filter 0.2s;
+        }
+        .player-volume-btn.muted #volume-icon-muted {
+            fill: var(--accent-blue);
+            filter: drop-shadow(0 0 4px var(--accent-blue));
+        }
+        
+        #player-radio {
+            border: 1px solid var(--text-secondary); color: var(--text-secondary);
+            background: none; padding: 4px 8px; border-radius: 4px;
+            cursor: pointer; font-weight: 700; font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        #player-radio.active {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(68,170,255,0.7);
+        }
+        #player-radio:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed;
+            color: var(--text-secondary) !important;
+            box-shadow: none !important;
+            border-color: var(--text-secondary) !important;
+        }
+
+        /* Volume Slider Styling */
+        #player-volume-slider {
+            -webkit-appearance: none; appearance: none;
+            width: 100px; height: 6px; background: #555;
+            border-radius: 3px; outline: none; cursor: pointer;
+        }
+        #player-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px; background: var(--text-primary);
+            border-radius: 50%; cursor: pointer;
+        }
+        #player-volume-slider::-moz-range-thumb {
+            width: 16px; height: 16px; background: var(--text-primary);
+            border-radius: 50%; cursor: pointer;
+        }
+
+        #main-audio-player, #radio-audio-player, #failsafe-audio-player { display: none; }
+        
+        #persistent-player.radio-mode #player-prev,
+        #persistent-player.radio-mode #player-play,
+        #persistent-player.radio-mode #player-next,
+        #persistent-player.radio-mode #player-shuffle,
+        #persistent-player.radio-mode #player-repeat {
+            display: none;
+        }
+
+        /* Responsive Overrides */
+        .short-text { display: none; }
+        @media (max-width: 900px) {
+            .full-text.nav-text { display: none; }
+            .short-text.nav-text { display: inline; }
+            .header-left, nav.main-nav, .header-right { gap: 20px; }
+            .home-section, .home-section:nth-child(even) { 
+                flex-direction: column !important; 
+                padding: 0 20px; 
+                gap: 25px;
+            }
+            .home-section .home-section-text {
+                order: 1;
+                text-align: center;
+            }
+            .home-section .home-section-placeholder {
+                order: 2;
+                flex: none;
+                width: 100%;
+            }
+            
+            #what-to-do-section .home-section-text {
+                display: none;
+            }
+
+            #what-to-do-section {
+                justify-content: center;
+            }
+
+            #what-to-do-section .home-section-placeholder {
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #home-page { padding: 50px 20px; }
+            #gnomon-radio-page {
+                flex-direction: column;
+                overflow-y: auto;
+                justify-content: flex-start;
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+            #hive-page { flex-direction: column; }
+            #hive-page .left-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+            #hive-page .right-panel { padding: 25px; }
+
+
+            #welcome-container {
+                width: 90%;
+                height: auto;
+                max-height: none;
+                margin-bottom: 20px;
+                order: -1;
+                justify-content: flex-start;
+                padding-bottom: 15px;
+            }
+             #welcome-container h3 {
+                margin-bottom: 15px;
+            }
+            #welcome-toggle {
+                display: inline-flex;
+            }
+            #welcome-collapsible-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease-in-out;
+            }
+            #welcome-collapsible-content.expanded {
+                max-height: 500px; /* Adjust if content is taller */
+            }
+
+            #chat-container { width: 90%; height: 40vh; max-height: 300px; margin-top: 20px; }
+            .player-progress-container { display: none; }
+            header { padding: 0 20px; }
+            .header-right { gap: 15px; }
+            .player-volume {
+                width: auto;
+                min-width: 0;
+                justify-content: center;
+            }
+            #player-volume-slider { display: none; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="dynamic-background"></div>
+    <header>
+        <div class="header-left">
+            <a class="logo" id="logo">The Blueprint</a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="#" class="nav-link" data-page="home-page">Home</a>
+                <a href="#" class="nav-link" data-page="hive-page">
+                    <span class="full-text nav-text">The Archive</span>
+                    <span class="short-text nav-text">Archive</span>
+                </a>
+                <a href="#" class="nav-link" data-page="gnomon-radio-page">
+                    <span class="full-text nav-text">Gnomon Radio</span>
+                    <span class="short-text nav-text">GRadio</span>
+                </a>
+            </nav>
+            <button class="login-btn">Login</button>
+        </div>
+    </header>
+
+    <div id="home-page" class="page-content">
+        <div class="home-container">
+            <section class="home-video-section">
+                <video src="vidpreviews/flipfeatured_video.mp4" autoplay muted loop playsinline></video>
+            </section>
+            
+            <section class="home-intro-text">
+                <p class="orange-text">The Blueprint isn't just about music.</p>
+                <p>It’s a way of seeing life, and understanding how it sees you back. What happens within this world, shapes what it becomes. And what it becomes, will inevitably shape us.</p>
+                <p>We can start by listening. We can start by seeing what’s actually there. We can start by understanding what this world is turning into, and what part we play in it. <br>Read on or head over to <a id="home-to-hive-link">The Archive</a> to listen to music.</p>
+            </section>
+
+            <section class="home-section" id="what-to-do-section">
+                <div class="home-section-text">
+                    <h2>What can I do here?</h2>
+                    <p>This space isn't passive. It's a place to explore, connect, and take part in something meaningful. Whether you want to come back, or simply leave with something you didnt have the words for previously. What you do matters.</p>
+                    <p>Meet the artists, take the quiz, tune in, share what hits. Whether you stay five minutes or five hours, you're part of the Archive now.</p>
+                </div>
+                <div class="home-section-placeholder" style="background-image: url('images/fhome1.png');">
+                </div>
+            </section>
+            
+            <section class="home-section" id="g-type-quiz-section">
+                <div class="home-section-text">
+                    <h2>Discover your G-Type</h2>
+                    <p>Curious what your unique archetype might be? Take the <a href="gquiz.html" target="_blank">Questionnaire</a> and find out where you fit in, and explore a side of yourself you might not have put into words before. Whether you’re here out of curiosity or to find a deeper connection, this is where you start.</p>
+                    <p>Take a few minutes to dive in, see what resonates, and explore a perspective you've been circling for years without realising.</p>
+                </div>
+                <div class="home-section-placeholder" style="background-image: url('images/fhome2.png');">
+                </div>
+            </section>
+
+            <section class="home-section" id="gnomon-radio-section">
+                <div class="home-section-text">
+                    <h2>What’s the GRadio?</h2>
+                    <p><a id="home-to-GRadio-link">Gnomon Radio</a> is a constantly evolving stream of songs from our AI artists, curated to match different G-Type energies. It’s not built on genre or tempo. It’s built on state of mind.</p>
+                    <p>Whether you're seeking clarity, processing emotion, or just need background frequencies that get it, this stream is designed to give your mind what it needs. Without needing to ask.</p>
+                </div>
+                <div class="home-section-placeholder" style="background-image: url('images/fhome3.png');">
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="gnomon-radio-page" class="page-content">
+        <div id="welcome-container">
+            <h3>Welcome to Gnomon Radio</h3>
+            <div id="welcome-collapsible-content">
+                <p>This is a 24/7 living stream from The Blueprint. Music tuned to mindset, not mood. Sorted by G-Type, not genre.</p>
+                <p>Whether you’re up late thinking, mid-spiral, or chasing stillness in the noise, this stream meets your state of mind without asking questions.</p>
+                <p>Pick a G‑Type from the wheel to match your headspace, or hit Global for a full-spectrum ride. It’s all here. Your move.</p>
+            </div>
+            <button id="welcome-toggle">
+                <span class="toggle-text">read more</span><span class="toggle-icon">+</span>
+            </button>
+        </div>
+        <div class="gnomon-container">
+            <svg id="gnomon-wheel-svg" viewBox="-160 -160 320 320">
+                <defs>
+                    <path id="centerTextCurveTop" d="M -22 -3 A 22 19 0 0 1 22 -3" fill="none"/>
+                    <path id="centerTextCurveBottom" d="M -22 10 A 22 19 0 0 0 22 10" fill="none"/>
+                    <pattern id="fgrwheel1" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="images/fgrwheel1.png" preserveAspectRatio="xMidYMid slice" x="0" y="0" width="1" height="1" /></pattern>
+                    <pattern id="fgrwheel2" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="images/fgrwheel2.png" preserveAspectRatio="xMidYMid slice" x="0" y="0" width="1" height="1" /></pattern>
+                    <pattern id="fgrwheel3" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="images/fgrwheel3.png" preserveAspectRatio="xMidYMid slice" x="0" y="0" width="1" height="1" /></pattern>
+                    <pattern id="fgrwheel4" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="images/fgrwheel4.png" preserveAspectRatio="xMidYMid slice" x="0" y="0" width="1" height="1" /></pattern>
+                    <pattern id="fgrwheel5" patternContentUnits="objectBoundingBox" width="1" height="1"><image href="images/fgrwheel5.png" preserveAspectRatio="xMidYMid slice" x="0" y="0" width="1" height="1" /></pattern>
+                </defs>
+                <g id="circle-segments"></g>
+                <g id="image-placeholders"></g>
+                <g id="circle-text"></g>
+                <g id="center-element" data-segment-id="15">
+                    <circle id="center-circle-bg" cx="0" cy="0" r="35" />
+                    <text class="center-curved-text-style" id="center-label-text-element-top">
+                        <textPath id="center-curved-text-content-top" xlink:href="#centerTextCurveTop" startOffset="50%">Global</textPath>
+                    </text>
+                    <text class="center-curved-text-style" id="center-label-text-element-bottom">
+                        <textPath id="center-curved-text-content-bottom" xlink:href="#centerTextCurveBottom" startOffset="50%">Station</textPath>
+                    </text>
+                    <title>Global Radio</title>
+                </g>
+            </svg>
+        </div>
+        <div id="chat-container">
+            <div id="chat-messages">
+                <!-- Example Message -->
+                <div class="chat-message">
+                    <span class="chat-username">System:</span>
+                    <span class="chat-text">Welcome to GRadio chat.</span>
+                </div>
+            </div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Say something...">
+                <button id="chat-send-btn">›</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- This is the new, updated Archive page content -->
+    <main id="hive-page" class="page-content">
+        <div class="left-panel">
+            <div class="category-list-wrapper"><ul class="category-list" id="categoryList"></ul></div>
+        </div>
+        <div class="right-panel">
+            <div id="archive-content-container">
+                <!-- Content will be built by our script -->
+            </div>
+        </div>
+    </main>
+    
+    <audio id="main-audio-player"></audio>
+    <audio id="radio-audio-player"></audio>
+    <audio id="failsafe-audio-player"></audio>
+    <div id="persistent-player">
+        <div class="player-track-info">
+            <div class="player-album-art" id="player-album-art"></div>
+            <div class="player-title-artist">
+                <div class="title" id="player-title">Track Title</div>
+                <div class="artist" id="player-artist">Artist Name</div>
+            </div>
+        </div>
+        <div class="player-center-controls">
+            <div class="player-controls">
+                <button id="player-shuffle">⇄</button>
+                <button id="player-prev">⏮</button>
+                <button id="player-play">▶</button>
+                <button id="player-next">⏭</button>
+                <button id="player-repeat">↻</button>
+            </div>
+            <div class="player-progress-container">
+                <span class="time-display" id="player-current-time">0:00</span>
+                <div class="progress-bar-container" id="player-progress-bar">
+                    <div class="progress-bar-fill" id="player-progress-fill"></div>
+                </div>
+                <span class="time-display" id="player-duration">0:00</span>
+            </div>
+        </div>
+        <div class="player-volume">
+            <button id="player-radio">[GS]</button>
+            <button class="player-volume-btn" id="player-volume-btn">
+                <svg id="volume-icon-unmuted" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
+                <svg id="volume-icon-muted" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg>
+            </button>
+            <input type="range" id="player-volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
+    </div>
+    
+    <footer id="footer">
+        &copy; 2025 The Blueprint. All rights reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // NOTE: The `coresData` object and related functions have been removed as they are part of the old Archive.
+            const navLinks = document.querySelectorAll('.nav-link'), pages = document.querySelectorAll('.page-content'), footer = document.getElementById('footer'), dynamicBackground = document.getElementById('dynamic-background'), logo = document.getElementById('logo');
+            const persistentPlayerEl = document.getElementById('persistent-player'), mainAudioPlayer = document.getElementById('main-audio-player'), radioAudioPlayer = document.getElementById('radio-audio-player'), failsafeAudioPlayer = document.getElementById('failsafe-audio-player'), playerAlbumArt = document.getElementById('player-album-art'), playerTitle = document.getElementById('player-title'), playerArtist = document.getElementById('player-artist'), playerPlayBtn = document.getElementById('player-play'), playerNextBtn = document.getElementById('player-next'), playerPrevBtn = document.getElementById('player-prev'), playerCurrentTime = document.getElementById('player-current-time'), playerDuration = document.getElementById('player-duration'), playerProgressBar = document.getElementById('player-progress-bar'), playerProgressFill = document.getElementById('player-progress-fill'), playerVolumeBtn = document.getElementById('player-volume-btn'), playerVolumeSlider = document.getElementById('player-volume-slider'), volumeIconUnmuted = document.getElementById('volume-icon-unmuted'), volumeIconMuted = document.getElementById('volume-icon-muted');
+            const playerShuffleBtn = document.getElementById('player-shuffle'), playerRepeatBtn = document.getElementById('player-repeat'), playerRadioBtn = document.getElementById('player-radio');
+            const homeToHiveLink = document.getElementById('home-to-hive-link'), homeToGRadioLink = document.getElementById('home-to-GRadio-link');
+            const welcomeContainer = document.getElementById('welcome-container'), welcomeTitle = welcomeContainer.querySelector('h3'), welcomeContent = document.getElementById('welcome-collapsible-content'), welcomeToggle = document.getElementById('welcome-toggle');
+            const gnomonSvg = document.getElementById('gnomon-wheel-svg');
+
+            let currentPlaylist = [], currentTrackIndex = 0; let isShuffle = false, isRepeatOne = false;
+            let isRadioActive = false;
+            let globalRadioPlaylist = [];
+            let currentRadioTrackIndex = -1;
+            let isRadioPlaylistBuilt = false;
+            let isMutedGlobally = false;
+            let lastVolume = 1;
+            let hasManuallyPlayedTrack = false;
+            let initialRadioTakeoverComplete = false;
+            const failsafeSequence = ["Vestige", "Neophyte", "Tether", "Penitent", "Global"];
+            let userClickSequence = [];
+            let lastClickTime = 0;
+            let failsafeActivated = false;
+            let failsafeTimeoutId = null; 
+            let mainPlayerWasPlayingBeforeFailsafe = false;
+            let currentPlaylistIdentifier = null;
+            let lastGTypePlaylistIdentifier = null;
+            let radioMutedBeforeFailsafe;
+            
+            // --- Event Handlers for Failsafe ---
+            function failsafeClickHandler() {
+                if (failsafeTimeoutId) {
+                    clearTimeout(failsafeTimeoutId);
+                    failsafeTimeoutId = null;
+                }
+                window.location.href = 'index.html';
+            }
+
+            function normalCenterClickHandler() {
+                if (checkFailsafeSequence("Global")) {
+                    return; 
+                }
+                toggleRadioMode();
+            }
+
+            const gTypePlaylists = {
+                "Anomaly": [{"artist":"Steppa","file":"Ninja.wav","bg":"images/bgsteppa.png"},{"artist":"Valentine","file":"Addicted.wav","bg":"images/bgvalentine.png"}],
+                "Advent": [{"artist":"Raevo","file":"404.wav","bg":"images/bgraevo.png"},{"artist":"Chérie","file":"POV.wav","bg":"images/bgcherie.png"}],
+                "Vestige": [{"artist":"Other Albums","file":"The Game.wav","bg":"images/callbacklater.png"},{"artist":"Lexi","file":"Was It Worth It - Written by [Bri] from Suno.wav","bg":"images/bglexi.png"}],
+                "Madrigal": [{"artist":"Valentine","file":"Black Bee.wav","bg":"images/bgvalentine.png"},{"artist":"Kyarne","file":"Babylon Streets.wav","bg":"images/bgkyarne.png"}],
+                "Revenant": [{"artist":"Chérie","file":"33.wav","bg":"images/bgcherie.png"},{"artist":"Raevo","file":"Rage-quit.wav","bg":"images/bgraevo.png"}],
+                "Penitent": [{"artist":"Other Albums","file":"Still Here.wav","bg":"images/surveillance.png"},{"artist":"Valentine","file":"My Song - Written by [rvix86] from Suno.wav","bg":"images/bgvalentine.png"}],
+                "Aegis": [{"artist":"Steppa","file":"Man.wav","bg":"images/bgsteppa.png"},{"artist":"Other Albums","file":"Secrets.wav","bg":"images/surveillance.png"}],
+                "Conduit": [{"artist":"Raevo","file":"Wait, i like it.wav","bg":"images/bgraevo.png"},{"artist":"Other Albums","file":"I'm Busy.wav","bg":"images/callbacklater.png"}],
+                "Renegade": [{"artist":"Kyarne","file":"Juk.wav","bg":"images/bgkyarne.png"},{"artist":"Chérie","file":"Ose La Danse.wav","bg":"images/bgcherie.png"}],
+                "Dynamo": [{"artist":"Other Albums","file":"Lived It.wav","bg":"images/surveillance.png"},{"artist":"Raevo","file":"Reset.wav","bg":"images/bgraevo.png"}],
+                "Neophyte": [{"artist":"Kyarne","file":"Green Moon.wav","bg":"images/bgkyarne.png"},{"artist":"Other Albums","file":"Cherry Red.wav","bg":"images/callbacklater.png"}],
+                "Tether": [{"artist":"Chérie","file":"Invisible.wav","bg":"images/bgcherie.png"},{"artist":"Valentine","file":"Honey Trap.wav","bg":"images/bgvalentine.png"}],
+                "Guardian": [{"artist":"Other Albums","file":"Communicate.wav","bg":"images/surveillance.png"},{"artist":"Kyarne","file":"Blunt.wav","bg":"images/bgkyarne.png"}],
+                "Vigil": [{"artist":"Steppa","file":"Pen To Pen.wav","bg":"images/bgsteppa.png"},{"artist":"Other Albums","file":"Seizure.wav","bg":"images/callbacklater.png"}]
+            };
+
+            const gTypeDescriptions = {
+                "Advent": "This is the spark before identity forms. Sounds that match raw input, instinctive action, the pressure of becoming something when you don’t yet know what. Unfiltered momentum. No anchors, no questions.<br><br>Whether you're pacing, building, starting over, or just reacting, this playlist rides the current. It doesn’t wait. It doesn’t reflect. It just moves. Born out of silence, tuned for ignition.",
+                "Vestige": "This is what lingers when the story fractures. Sounds that echo through identity loss, memory loops, and sudden absences. The tension of something once known, now haunting the shape it left behind.<br><br>Whether you’re retracing steps, grieving what changed, or stuck in reverse, this playlist speaks in static. It remembers for you. It searches through the ash for proof that you were real.",
+                "Madrigal": "This is the mask made melody. Sounds draped in secrecy, whispers, and rituals. The play between signal and disguise. What hides in the soft edges when words won’t do.<br><br>Whether you’re watching from the fringe or performing from behind a veil, this playlist moves like coded language. It won’t ask you to reveal. It just lets you stay hidden in style.",
+                "Revenant": "This is what comes back when it’s not supposed to. Sounds built from vengeance, grit, and cracked resolve. The feeling of unfinished business that keeps pulsing through your pulse.<br><br>Whether you’re reclaiming power or living out the echo, this playlist doesn’t blink. It walks through the wreckage, barefoot. It knows the cost. And it’s not done paying.",
+                "Penitent": "This is the low hum of knowing things went too far. Sounds shaped by guilt, clarity, and a quiet hunger to atone. The weight of self-awareness when nothing feels clean anymore.<br><br>Whether you’re making peace or just trying to feel it again, this playlist stays close to the ground. It doesn’t flinch. It holds the ache and lets you breathe through it.",
+                "Aegis": "This is the signal shielded by purpose. Sounds forged in loyalty, grit, and a refusal to let the world go cold. The warmth that stands between chaos and collapse.<br><br>Whether you're empowering people, or being the one who stays strong, this playlist holds firm. It stays standing in the rain and keeps the light on. That’s just what it does.",
+                "Conduit": "This is the hum between forces. Sounds that spark recognition, fusion, and intuitive flow. The thrill of being tuned in, dialed up, completely awake to the current of connection.<br><br>Whether you're channeling feeling, syncing with others, or translating the abstract, this playlist listens back. It hears between the words and sings where meanings meet.",
+                "Renegade": "This is the refusal. Sounds that cut through noise, disrupt routines, and throw sparks where silence took root. The raw jolt of confronting what’s wrong just because it is.<br><br>Whether you're pacing lines or torching them, this playlist doesn’t flatter. It flips the script. It doesn’t want safe. It wants the real. And it’ll burn bridges to light the way.",
+                "Dynamo": "This is the overload. Sounds that spiral, crash, surge, and ignite. The voltage of a mind that won’t sit still, that feeds on friction, that explodes just to feel the shape of its limits.<br><br>Whether you’re chasing it or trying to outpace it, this playlist is high-pressure. No pause, no ease. Just pure combustion. Brilliance and burnout braided tight.",
+                "Neophyte": "This is the clean slate. Sounds built for quiet beginnings, cleared noise, and space to settle. You don’t have to know yet. That’s the whole point.<br><br>Whether you're reflecting, resetting, or starting to notice what matters, this playlist keeps it calm. It doesn’t rush. It’s not empty, just open. Nothing yet decided. Nothing yet ruined.",
+                "Tether": "This is the weight that holds. Sounds made to root you, calm the signal, and keep you here when everything else pulls. The steady pull of presence.<br><br>Whether you’re spiraling, untangling, or just trying to stop time, this playlist grounds you. It’s slow by design. Not stuck. Just real. Breath by breath. Step by step. Still here.",
+                "Guardian": "This is the sound of watching over. Of standing tall when no one else will. Sounds shaped by quiet courage, bone-deep duty, and the ache of care that never clocks out.<br><br>Whether you're protecting people, promises, or something no one else can see, this playlist holds the line. It doesn’t need thanks. It just needs to last.",
+                "Vigil": "This is what stays awake. Sounds made for thresholds, dawns, and dusk-light reckonings. The stillness of clarity when everything else has fallen away.<br><br>Whether you’re shedding something, or rising from what burned, this playlist sees it through. It glows quiet. It doesn't mourn the past. It just carries what mattered into what's next.",
+                "Anomaly": "This is the one that doesn’t belong. Sounds bent sideways, abstract, impossible to pin. It’s not trying to make sense, it just is. Something rare enough to feel wrong.<br><br>Whether you're orbiting the edges or right in the glitch, this playlist doesn't align. It resists pattern. It mutates on purpose. The rules didn’t see this coming."
+            };
+
+            function updateWelcomeBox(gTypeName) {
+                const isDefault = !gTypeName || gTypeName === 'Global' || !gTypeDescriptions[gTypeName];
+                
+                if (isDefault) {
+                    welcomeTitle.textContent = 'Welcome to Gnomon Radio';
+                    welcomeContent.innerHTML = `
+                        <p>This is a 24/7 living stream from The Blueprint. Music tuned to mindset, not mood. Sorted by G-Type, not genre.</p>
+                        <p>Whether you’re up late thinking, mid-spiral, or chasing stillness in the noise, this stream meets your state of mind without asking questions.</p>
+                        <p>Pick a G‑Type from the wheel to match your headspace, or hit Global for a full-spectrum ride. It’s all here. Your move.</p>
+                    `;
+                } else {
+                    welcomeTitle.textContent = gTypeName;
+                    welcomeContent.innerHTML = `<p>${gTypeDescriptions[gTypeName]}</p>`;
+                }
+
+                const isExpanded = welcomeContent.classList.contains('expanded');
+                if (isExpanded) {
+                    welcomeToggle.click();
+                }
+            }
+
+            function playTrack(track) {
+                hasManuallyPlayedTrack = true;
+                mainAudioPlayer.muted = isMutedGlobally;
+                radioAudioPlayer.muted = true;
+                const { artist, file, bg } = track;
+                const trackName = file.split('.').slice(0, -1).join('.');
+                // The track path is now hardcoded for G-Type playlists
+                mainAudioPlayer.src = `database/${artist}/${file}`;
+                mainAudioPlayer.play();
+                updatePlayerUI(trackName, artist, bg);
+                persistentPlayerEl.classList.add('visible');
+                footer.classList.add('hidden');
+            }
+            function playNext() { if (currentPlaylist.length === 0) return; if (isShuffle) { let nextIndex; if (currentPlaylist.length === 1) { nextIndex = 0; } else { do { nextIndex = Math.floor(Math.random() * currentPlaylist.length); } while (nextIndex === currentTrackIndex); } currentTrackIndex = nextIndex; } else { currentTrackIndex = (currentTrackIndex + 1) % currentPlaylist.length; } playTrack(currentPlaylist[currentTrackIndex]); }
+            function playPrev() { if (currentPlaylist.length === 0) return; currentTrackIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length; playTrack(currentPlaylist[currentTrackIndex]); }
+            
+            function formatTime(seconds) { const min = Math.floor(seconds / 60); const sec = Math.floor(seconds % 60); return `${min}:${sec < 10 ? '0' : ''}${sec}`; }
+            
+            function showPage(pageId) { 
+                const pageIsHive = pageId === 'hive-page';
+                // The new Archive doesn't use the dynamic background.
+                dynamicBackground.style.display = 'none';
+
+                const pageToShow = document.getElementById(pageId);
+                pages.forEach(page => { page.style.display = 'none'; });
+                if(pageToShow) {
+                    pageToShow.style.display = (pageId === 'hive-page' || pageId === 'gnomon-radio-page') ? 'flex' : 'block';
+                }
+                navLinks.forEach(nav => nav.classList.toggle('active', nav.dataset.page === pageId));
+
+                if (pageId === 'gnomon-radio-page') {
+                    if (!isRadioPlaylistBuilt) buildAndStartRadio();
+                    
+                    if ((!hasManuallyPlayedTrack || (!mainAudioPlayer.paused && !initialRadioTakeoverComplete)) && !isRadioActive) {
+                        toggleRadioMode();
+                        initialRadioTakeoverComplete = true; 
+                    }
+
+                    updateActiveSegment(currentPlaylistIdentifier);
+                    persistentPlayerEl.classList.add('visible');
+                    footer.classList.add('hidden');
+                }
+            }
+            
+            function fadeInRadio() {
+                radioAudioPlayer.muted = false;
+                radioAudioPlayer.volume = 0;
+                let currentVolume = 0;
+                const targetVolume = lastVolume;
+                if (targetVolume === 0) return;
+
+                const fadeDuration = 3000;
+                const steps = 50;
+                const stepDuration = fadeDuration / steps;
+                const volumeIncrement = targetVolume / steps;
+
+                const fadeInterval = setInterval(() => {
+                    currentVolume += volumeIncrement;
+                    if (currentVolume >= targetVolume) {
+                        radioAudioPlayer.volume = targetVolume;
+                        clearInterval(fadeInterval);
+                    } else {
+                        radioAudioPlayer.volume = currentVolume;
+                    }
+                }, stepDuration);
+            }
+
+            function buildAndStartRadio() {
+                if(isRadioPlaylistBuilt) return;
+                
+                // This function is now simpler as it only draws from G-Type playlists
+                for (const gType in gTypePlaylists) {
+                    globalRadioPlaylist.push(...gTypePlaylists[gType]);
+                }
+                
+                for (let i = globalRadioPlaylist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [globalRadioPlaylist[i], globalRadioPlaylist[j]] = [globalRadioPlaylist[j], globalRadioPlaylist[i]]; }
+                isRadioPlaylistBuilt = true;
+
+                playNextRadioTrack(true);
+            }
+            
+            function playNextRadioTrack(isInitial = false) {
+                if (globalRadioPlaylist.length === 0) return;
+                
+                if (!isInitial) {
+                    currentRadioTrackIndex = (currentRadioTrackIndex + 1) % globalRadioPlaylist.length;
+                } else {
+                    currentRadioTrackIndex = 0;
+                }
+
+                const track = globalRadioPlaylist[currentRadioTrackIndex];
+                if (!track) return;
+                radioAudioPlayer.src = `database/${track.artist}/${track.file}`;
+
+                const handleInitialPlay = () => {
+                    if (radioAudioPlayer.duration && isFinite(radioAudioPlayer.duration)) {
+                        const safeDuration = radioAudioPlayer.duration > 15 ? radioAudioPlayer.duration - 15 : 0;
+                        radioAudioPlayer.currentTime = Math.random() * safeDuration;
+                        radioAudioPlayer.play().catch(e => console.error("Initial radio play failed:", e));
+                        if (!isMutedGlobally) {
+                            fadeInRadio();
+                        }
+                    }
+                };
+
+                if (isInitial) {
+                    radioAudioPlayer.muted = true;
+                    if (radioAudioPlayer.readyState >= 1) { // HAVE_METADATA
+                        handleInitialPlay();
+                    } else {
+                        radioAudioPlayer.addEventListener('loadedmetadata', handleInitialPlay, { once: true });
+                    }
+                } else {
+                    radioAudioPlayer.currentTime = 0;
+                    if(isRadioActive) {
+                        radioAudioPlayer.muted = isMutedGlobally;
+                        radioAudioPlayer.volume = lastVolume;
+                    } else {
+                        radioAudioPlayer.muted = true;
+                    }
+                    radioAudioPlayer.play().catch(e => console.error("Radio transition play failed:", e));
+                }
+
+                if (isRadioActive) {
+                    updatePlayerUI(track.file.split('.').slice(0, -1).join('.'), track.artist, track.bg);
+                }
+            }
+
+            function toggleRadioMode() {
+                const becomingActive = !isRadioActive;
+                isRadioActive = becomingActive;
+                
+                persistentPlayerEl.classList.toggle('radio-mode', becomingActive);
+                playerRadioBtn.classList.toggle('active', becomingActive);
+                playerProgressBar.classList.toggle('interactive', !becomingActive);
+                
+                if (becomingActive) {
+                    if (currentPlaylistIdentifier && currentPlaylistIdentifier !== "Global") {
+                        lastGTypePlaylistIdentifier = currentPlaylistIdentifier;
+                    } else {
+                        lastGTypePlaylistIdentifier = null;
+                    }
+                    mainPlayerWasPlaying = !mainAudioPlayer.paused;
+                    mainAudioPlayer.pause();
+                    mainAudioPlayer.muted = true;
+                    radioAudioPlayer.muted = isMutedGlobally;
+                    const track = globalRadioPlaylist[currentRadioTrackIndex];
+                    if (track) { updatePlayerUI(track.file.split('.').slice(0, -1).join('.'), track.artist, track.bg); }
+                    currentPlaylistIdentifier = "Global";
+                    updateActiveSegment("Global");
+                    updateWelcomeBox("Global");
+                } else {
+                    radioAudioPlayer.muted = true;
+                    mainAudioPlayer.muted = isMutedGlobally; 
+                    if (mainPlayerWasPlaying) { 
+                        mainAudioPlayer.play(); 
+                    }
+                    if (!mainAudioPlayer.src || mainAudioPlayer.src === window.location.href) {
+                        const randomTrack = globalRadioPlaylist[Math.floor(Math.random() * globalRadioPlaylist.length)];
+                        if (randomTrack) {
+                            mainAudioPlayer.src = `database/${randomTrack.artist}/${randomTrack.file}`;
+                            updatePlayerUI(randomTrack.file.split('.').slice(0, -1).join('.'), randomTrack.artist, randomTrack.bg);
+                        }
+                    } else {
+                         const trackInfo = findTrackInfoBySrc(mainAudioPlayer.src);
+                        if (trackInfo) { updatePlayerUI(trackInfo.title, trackInfo.artist, trackInfo.bg); } 
+                    }
+                    
+                    currentPlaylistIdentifier = lastGTypePlaylistIdentifier; 
+                    updateActiveSegment(currentPlaylistIdentifier);
+                    updateWelcomeBox(currentPlaylistIdentifier);
+                }
+            }
+
+            function updatePlayerUI(title, artist, bg) { playerTitle.textContent = title; playerArtist.textContent = artist; playerAlbumArt.style.backgroundImage = bg ? `url('${bg}')` : 'none'; }
+            
+            function findTrackInfoBySrc(src) {
+                if (!src || src === window.location.href) return null;
+                for (const gType in gTypePlaylists) {
+                    for (const track of gTypePlaylists[gType]) {
+                        const fullTrackPath = new URL(`database/${track.artist}/${track.file}`, document.baseURI).href;
+                        if (fullTrackPath === src) {
+                            return { title: track.file.split('.').slice(0, -1).join('.'), artist: track.artist, bg: track.bg };
+                        }
+                    }
+                }
+                return null;
+            }
+            
+            function setGlobalVolume(level) {
+                const volume = Math.max(0, Math.min(1, level));
+                isMutedGlobally = volume === 0;
+                if (!isMutedGlobally) {
+                    lastVolume = volume;
+                }
+                
+                mainAudioPlayer.volume = radioAudioPlayer.volume = failsafeAudioPlayer.volume = volume;
+                mainAudioPlayer.muted = isMutedGlobally || isRadioActive;
+                radioAudioPlayer.muted = isMutedGlobally || !isRadioActive;
+                failsafeAudioPlayer.muted = isMutedGlobally;
+                updateVolumeUI();
+            }
+
+            function toggleGlobalMute() {
+                if (isMutedGlobally) {
+                    setGlobalVolume(lastVolume > 0 ? lastVolume : 0.5);
+                } else {
+                    setGlobalVolume(0);
+                }
+            }
+
+            function updateVolumeUI() {
+                volumeIconUnmuted.style.display = isMutedGlobally ? 'none' : 'block';
+                volumeIconMuted.style.display = isMutedGlobally ? 'block' : 'none';
+                playerVolumeBtn.classList.toggle('muted', isMutedGlobally);
+                playerVolumeSlider.value = isMutedGlobally ? 0 : lastVolume;
+            }
+            
+            function checkFailsafeSequence(label) {
+                if (failsafeActivated) return false;
+                const currentTime = Date.now();
+                if (currentTime - lastClickTime > 3000) {
+                    userClickSequence = [];
+                }
+                lastClickTime = currentTime;
+                userClickSequence.push(label);
+                for (let i = 0; i < userClickSequence.length; i++) {
+                    if (userClickSequence[i] !== failsafeSequence[i]) {
+                        userClickSequence = [];
+                        if (label === failsafeSequence[0]) {
+                            userClickSequence.push(label);
+                        }
+                        return false;
+                    }
+                }
+                if (userClickSequence.length === failsafeSequence.length) {
+                    activateFailsafe();
+                    userClickSequence = [];
+                    return true;
+                }
+                return false;
+            }
+
+            function activateFailsafe() {
+                if(failsafeActivated) return;
+                failsafeActivated = true;
+                
+                [playerShuffleBtn, playerRepeatBtn, playerPrevBtn, playerNextBtn, playerPlayBtn, playerRadioBtn].forEach(btn => btn.disabled = true);
+                
+                if (isRadioActive) {
+                    radioMutedBeforeFailsafe = radioAudioPlayer.muted;
+                    radioAudioPlayer.muted = true;
+                } else {
+                    mainPlayerWasPlayingBeforeFailsafe = !mainAudioPlayer.paused;
+                    if (mainPlayerWasPlayingBeforeFailsafe) {
+                        mainAudioPlayer.pause();
+                    }
+                }
+
+                failsafeAudioPlayer.src = 'audio/interval.wav';
+                failsafeAudioPlayer.play();
+
+                const gnomonCenterElement = gnomonSvg.querySelector('#center-element');
+                gnomonCenterElement.removeEventListener('click', normalCenterClickHandler);
+                gnomonCenterElement.addEventListener('click', failsafeClickHandler);
+
+                logo.classList.add('failsafe-active');
+                gnomonSvg.classList.add('failsafe-active', 'failsafe-glow');
+                const gnomonCenterTextPathTop = gnomonSvg.querySelector('#center-curved-text-content-top');
+                const gnomonCenterTextPathBottom = gnomonSvg.querySelector('#center-curved-text-content-bottom');
+                gnomonCenterElement.classList.add('failsafe-active');
+                gnomonCenterTextPathTop.textContent = 'click to';
+                gnomonCenterTextPathBottom.textContent = 'enter...';
+
+                const segmentLabels = [ "Anomaly", "Advent", "Vestige", "Madrigal", "Revenant", "Penitent", "Aegis", "Conduit", "Renegade", "Dynamo", "Neophyte", "Tether", "Guardian", "Vigil" ];
+                const highlightLabels = ["Vestige", "Penitent", "Neophyte", "Tether"];
+                const allSegments = gnomonSvg.querySelectorAll('.segment');
+                highlightLabels.forEach(label => {
+                    const index = segmentLabels.indexOf(label);
+                    if (index !== -1 && allSegments[index]) {
+                        allSegments[index].setAttribute('fill', `url(#fgrwheel5)`);
+                    }
+                });
+                
+                if (failsafeTimeoutId) clearTimeout(failsafeTimeoutId);
+                failsafeTimeoutId = setTimeout(() => {
+                    logo.classList.remove('failsafe-active');
+                    gnomonSvg.classList.remove('failsafe-active', 'failsafe-glow');
+                    gnomonCenterElement.classList.remove('failsafe-active');
+                    gnomonCenterTextPathTop.textContent = 'Global';
+                    gnomonCenterTextPathBottom.textContent = 'Station';
+                    
+                    updateActiveSegment(null);
+
+                    failsafeAudioPlayer.pause();
+                    failsafeAudioPlayer.currentTime = 0;
+                    
+                    if (!isRadioActive) {
+                        toggleRadioMode();
+                    }
+                    radioAudioPlayer.muted = isMutedGlobally;
+                    mainPlayerWasPlayingBeforeFailsafe = false;
+
+                    [playerShuffleBtn, playerRepeatBtn, playerPrevBtn, playerNextBtn, playerPlayBtn, playerRadioBtn].forEach(btn => btn.disabled = false);
+                    
+                    gnomonCenterElement.removeEventListener('click', failsafeClickHandler);
+                    gnomonCenterElement.addEventListener('click', normalCenterClickHandler);
+
+                    failsafeActivated = false;
+                    failsafeTimeoutId = null;
+                }, 10000);
+            }
+
+            function updateActiveSegment(activeLabel) {
+                const segments = gnomonSvg.querySelectorAll('.segment');
+                const centerBg = document.getElementById('center-circle-bg');
+                
+                segments.forEach((seg, index) => {
+                    seg.setAttribute('fill', 'url(#fgrwheel1)');
+                });
+                centerBg.setAttribute('fill', 'url(#fgrwheel2)');
+
+                if (activeLabel === "Global") {
+                    centerBg.setAttribute('fill', 'url(#fgrwheel4)');
+                } else if (activeLabel) {
+                    segments.forEach(seg => {
+                        if (seg.querySelector('title').textContent === activeLabel) {
+                            seg.setAttribute('fill', 'url(#fgrwheel5)');
+                        }
+                    });
+                }
+            }
+
+            function initializeGnomonWheel() {
+                const svgNS = "http://www.w3.org/2000/svg", xlinkNS = "http://www.w3.org/1999/xlink";
+                if (!gnomonSvg) return;
+
+                const gnomonSegmentGroup = gnomonSvg.querySelector('#circle-segments');
+                const gnomonTextGroup = gnomonSvg.querySelector('#circle-text');
+                const gnomonImageGroup = gnomonSvg.querySelector('#image-placeholders');
+                const gnomonCenterElement = gnomonSvg.querySelector('#center-element');
+                const gnomonCenterBg = gnomonSvg.querySelector('#center-circle-bg');
+                const segmentLabels = [ "Anomaly", "Advent", "Vestige", "Madrigal", "Revenant", "Penitent", "Aegis", "Conduit", "Renegade", "Dynamo", "Neophyte", "Tether", "Guardian", "Vigil" ];
+                const segmentImageFiles = [ "images/fsegment-1-symbol.png", "images/fsegment-2-symbol.png", "images/fsegment-3-symbol.png", "images/fsegment-4-symbol.png", "images/fsegment-5-symbol.png", "images/fsegment-6-symbol.png", "images/fsegment-7-symbol.png", "images/fsegment-8-symbol.png", "images/fsegment-9-symbol.png", "images/fsegment-10-symbol.png", "images/fsegment-11-symbol.png", "images/fsegment-12-symbol.png", "images/fsegment-13-symbol.png", "images/fsegment-14-symbol.png" ];
+
+                gnomonSegmentGroup.innerHTML = ''; gnomonTextGroup.innerHTML = ''; gnomonImageGroup.innerHTML = '';
+                const numSegments = 14, outerRadius = 115, innerRadius = 35, angleIncrement = (2 * Math.PI) / numSegments, rotationOffset = -Math.PI / 2 - angleIncrement / 2;
+                const isDesktop = window.innerWidth > 768;
+                const imageSize = isDesktop ? 32 : 24;
+                const symbolRadius = isDesktop ? outerRadius + 28 : outerRadius + 22;
+                const textPlacementRadius = innerRadius + (outerRadius - innerRadius) / 2;
+                const labelsToFlip = new Set(["Anomaly", "Renegade", "Dynamo", "Neophyte", "Tether", "Guardian", "Vigil"]);
+
+
+                function polarToCartesian(cx, cy, r, angle) { return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) }; }
+                function createSegmentPath(i) { const startAngle = i * angleIncrement + rotationOffset, endAngle = (i + 1) * angleIncrement + rotationOffset, startOuter = polarToCartesian(0, 0, outerRadius, startAngle), endOuter = polarToCartesian(0, 0, outerRadius, endAngle), startInner = polarToCartesian(0, 0, innerRadius, startAngle), endInner = polarToCartesian(0, 0, innerRadius, endAngle); return `M ${startOuter.x.toFixed(3)} ${startOuter.y.toFixed(3)} A ${outerRadius} ${outerRadius} 0 0 1 ${endOuter.x.toFixed(3)} ${endOuter.y.toFixed(3)} L ${endInner.x.toFixed(3)} ${endInner.y.toFixed(3)} A ${innerRadius} ${innerRadius} 0 0 0 ${startInner.x.toFixed(3)} ${startInner.y.toFixed(3)} Z`; }
+
+                for (let i = 0; i < numSegments; i++) {
+                    const segmentLabel = segmentLabels[i];
+                    const segmentPath = document.createElementNS(svgNS, 'path');
+                    segmentPath.setAttribute('d', createSegmentPath(i));
+                    segmentPath.setAttribute('class', 'segment');
+                    segmentPath.setAttribute('fill', 'url(#fgrwheel1)');
+                    segmentPath.addEventListener('click', () => {
+                        if (checkFailsafeSequence(segmentLabel)) {
+                            return;
+                        }
+                        if (currentPlaylistIdentifier === segmentLabel) return;
+                        if (isRadioActive) { toggleRadioMode(); }
+                        persistentPlayerEl.classList.remove('radio-mode');
+                        currentPlaylist = gTypePlaylists[segmentLabel];
+                        currentTrackIndex = 0;
+                        playTrack(currentPlaylist[currentTrackIndex]);
+                        currentPlaylistIdentifier = segmentLabel;
+                        updateActiveSegment(segmentLabel);
+                        updateWelcomeBox(segmentLabel);
+                    });
+                    gnomonSegmentGroup.appendChild(segmentPath);
+                    const title = document.createElementNS(svgNS, 'title');
+                    title.textContent = segmentLabel;
+                    segmentPath.appendChild(title);
+                    const text = document.createElementNS(svgNS, 'text');
+                    text.setAttribute('class', 'segment-text');
+                    text.textContent = segmentLabel;
+                    const midAngleRad = (i + 0.5) * angleIncrement + rotationOffset;
+                    const textPos = polarToCartesian(0, 0, textPlacementRadius, midAngleRad);
+                    text.setAttribute('x', textPos.x);
+                    text.setAttribute('y', textPos.y);
+                    let textRotationAngle = midAngleRad * (180 / Math.PI);
+                    if (labelsToFlip.has(segmentLabel)) { textRotationAngle += 180; }
+                    text.setAttribute('transform', `rotate(${textRotationAngle} ${textPos.x.toFixed(3)} ${textPos.y.toFixed(3)})`);
+                    
+                    segmentPath.addEventListener('mouseenter', () => {
+                        if (currentPlaylistIdentifier !== segmentLabel) {
+                            segmentPath.setAttribute('fill', 'url(#fgrwheel3)');
+                        }
+                        text.style.fill = '#000';
+                    });
+                     segmentPath.addEventListener('mouseleave', () => {
+                        if (currentPlaylistIdentifier !== segmentLabel) {
+                            segmentPath.setAttribute('fill', 'url(#fgrwheel1)');
+                        }
+                        text.style.fill = 'var(--text-primary)';
+                    });
+
+                    gnomonTextGroup.appendChild(text);
+                    const symbolPos = polarToCartesian(0, 0, symbolRadius, midAngleRad);
+                    const image = document.createElementNS(svgNS, 'image');
+                    image.setAttributeNS(xlinkNS, 'xlink:href', segmentImageFiles[i]);
+                    image.setAttribute('class', 'image-placeholder');
+                    image.style.animationDelay = `${i * 0.5}s`; 
+                    image.setAttribute('width', imageSize);
+                    image.setAttribute('height', imageSize);
+                    image.setAttribute('x', symbolPos.x - imageSize / 2);
+                    image.setAttribute('y', symbolPos.y - imageSize / 2);
+                    gnomonImageGroup.appendChild(image);
+                }
+                
+                gnomonCenterElement.addEventListener('click', normalCenterClickHandler);
+
+                gnomonCenterElement.addEventListener('mouseenter', () => {
+                    gnomonCenterBg.setAttribute('fill', 'url(#fgrwheel3)');
+                    gnomonCenterElement.querySelector('#center-curved-text-content-top').style.fill = '#000';
+                    gnomonCenterElement.querySelector('#center-curved-text-content-bottom').style.fill = '#000';
+                });
+                 gnomonCenterElement.addEventListener('mouseleave', () => {
+                    gnomonCenterBg.setAttribute('fill', isRadioActive ? 'url(#fgrwheel4)' : 'url(#fgrwheel2)');
+                    gnomonCenterElement.querySelector('#center-curved-text-content-top').style.fill = 'var(--text-primary)';
+                    gnomonCenterElement.querySelector('#center-curved-text-content-bottom').style.fill = 'var(--text-primary)';
+                });
+
+                gnomonCenterBg.setAttribute('fill', 'url(#fgrwheel2)');
+                gnomonCenterElement.querySelector('#center-curved-text-content-top').textContent = 'Global';
+                gnomonCenterElement.querySelector('#center-curved-text-content-bottom').textContent = 'Station';
+            }
+            
+            // --- NEW: Function to initialize the document Archive page ---
+            function initializeNewArchive() {
+                const categoryListContainer = document.getElementById('categoryList');
+                const archiveContentContainer = document.getElementById('archive-content-container');
+                
+                function displayError(message) {
+                    archiveContentContainer.innerHTML = `<h2>Error</h2><p>${message}</p>`;
+                }
+
+                function renderContent(categoryKey) {
+                    archiveContentContainer.innerHTML = ''; 
+
+                    const title = document.createElement('h2');
+                    title.textContent = categoryKey;
+                    archiveContentContainer.appendChild(title);
+
+                    // Check if archiveData is loaded
+                    if (typeof archiveData === 'undefined' || !archiveData[categoryKey]) {
+                         archiveContentContainer.innerHTML += '<p>No entries in this category yet.</p>';
+                         return;
+                    }
+
+                    const documents = archiveData[categoryKey];
+
+                    documents.forEach(doc => {
+                        const details = document.createElement('details');
+                        details.className = 'archive-entry';
+                        
+                        const summary = document.createElement('summary');
+                        summary.textContent = doc.title;
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'archive-document-content';
+                        
+                        if (typeof ARCHIVE_CONTENT !== 'undefined' && typeof ARCHIVE_CONTENT[doc.contentVar] !== 'undefined') {
+                            contentDiv.textContent = ARCHIVE_CONTENT[doc.contentVar];
+                        } else {
+                            contentDiv.textContent = `Content variable "${doc.contentVar}" not found. Please check: 1) The .js file is loaded in the <head>. 2) The file is saved as Plain Text. 3) The variable name in the manifest matches the one in the .js file.`;
+                        }
+
+                        details.appendChild(summary);
+                        details.appendChild(contentDiv);
+                        archiveContentContainer.appendChild(details);
+                    });
+                }
+
+                function renderCategories() {
+                    if (typeof archiveData === 'undefined') {
+                        displayError("FATAL ERROR: archive_manifest.js is missing or failed to load. Please ensure it's in the root folder.");
+                        return;
+                    }
+                    const categories = Object.keys(archiveData);
+                    categoryListContainer.innerHTML = '';
+                    categories.forEach(key => {
+                        const item = document.createElement('li');
+                        item.className = 'category-list-item';
+                        
+                        const button = document.createElement('button');
+                        button.textContent = key;
+                        button.onclick = () => {
+                            document.querySelectorAll('.category-list-item').forEach(li => li.classList.remove('active'));
+                            item.classList.add('active');
+                            renderContent(key);
+                        };
+                        
+                        item.appendChild(button);
+                        categoryListContainer.appendChild(item);
+                    });
+                }
+
+                try {
+                    renderCategories();
+                    const firstCategory = categoryListContainer.querySelector('.category-list-item');
+                    if (firstCategory) {
+                        firstCategory.classList.add('active');
+                        firstCategory.querySelector('button').click(); // Simulate a click to load initial content
+                    } else {
+                        archiveContentContainer.innerHTML = '<h2>Welcome</h2><p>The archive is ready. Add categories to your manifest file to begin.</p>';
+                    }
+                } catch (error) {
+                    console.error("Critical Error Initializing Archive:", error);
+                    displayError("A critical error occurred. Please check the browser console for details.");
+                }
+            }
+
+
+            // --- Main Execution ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage(link.dataset.page);
+                });
+            });
+
+            logo.addEventListener('click', (e) => { 
+                e.preventDefault();
+                if (failsafeActivated) {
+                    failsafeClickHandler();
+                } else {
+                    showPage('home-page');
+                }
+            });
+            
+            homeToHiveLink.addEventListener('click', (e) => { e.preventDefault(); showPage('hive-page'); });
+            homeToGRadioLink.addEventListener('click', (e) => { e.preventDefault(); showPage('gnomon-radio-page'); });
+            
+            playerPlayBtn.addEventListener('click', () => { if (mainAudioPlayer.paused) mainAudioPlayer.play(); else mainAudioPlayer.pause(); });
+            playerNextBtn.addEventListener('click', playNext); playerPrevBtn.addEventListener('click', playPrev);
+            mainAudioPlayer.addEventListener('play', () => { playerPlayBtn.textContent = '❚❚'; });
+            mainAudioPlayer.addEventListener('pause', () => { playerPlayBtn.textContent = '▶'; });
+            mainAudioPlayer.addEventListener('ended', () => { if (isRepeatOne) { mainAudioPlayer.currentTime = 0; mainAudioPlayer.play(); } else { playNext(); } });
+            
+            radioAudioPlayer.addEventListener('ended', () => playNextRadioTrack(false));
+            
+            radioAudioPlayer.addEventListener('pause', () => {
+                if (isRadioActive && !failsafeActivated && radioAudioPlayer.currentTime < radioAudioPlayer.duration) {
+                    radioAudioPlayer.play().catch(e => console.error("Radio auto-resume failed:", e));
+                }
+            });
+            
+            function updateProgress() { const player = isRadioActive ? radioAudioPlayer : mainAudioPlayer; if(player.duration) { const progress = (player.currentTime / player.duration) * 100; playerProgressFill.style.width = `${progress}%`; playerCurrentTime.textContent = formatTime(player.currentTime); playerDuration.textContent = formatTime(player.duration); } }
+            mainAudioPlayer.addEventListener('timeupdate', updateProgress);
+            radioAudioPlayer.addEventListener('timeupdate', updateProgress);
+            playerProgressBar.addEventListener('click', (e) => { if(isRadioActive || !mainAudioPlayer.duration) return; const rect = playerProgressBar.getBoundingClientRect(); const clickX = e.clientX - rect.left; const width = playerProgressBar.clientWidth; mainAudioPlayer.currentTime = (clickX / width) * mainAudioPlayer.duration; });
+            
+            playerVolumeBtn.addEventListener('click', toggleGlobalMute);
+            playerVolumeSlider.addEventListener('input', (e) => { setGlobalVolume(parseFloat(e.target.value)); });
+            
+            playerShuffleBtn.addEventListener('click', () => { isShuffle = !isShuffle; if (isShuffle && isRepeatOne) { isRepeatOne = false; playerRepeatBtn.classList.remove('active'); } playerShuffleBtn.classList.toggle('active', isShuffle); });
+            playerRepeatBtn.addEventListener('click', () => { isRepeatOne = !isRepeatOne; if (isRepeatOne && isShuffle) { isShuffle = false; playerShuffleBtn.classList.remove('active'); } playerRepeatBtn.classList.toggle('active', isRepeatOne); });
+            playerRadioBtn.addEventListener('click', toggleRadioMode);
+            
+            const initialPage = 'gnomon-radio-page';
+            showPage(initialPage);
+            initializeGnomonWheel();
+            initializeNewArchive(); // Initialize the new archive content
+            updateWelcomeBox(null);
+            navLinks.forEach(link => { link.classList.toggle('active', link.dataset.page === initialPage); });
+            playerProgressBar.classList.add('interactive');
+            setGlobalVolume(lastVolume);
+
+            setInterval(() => {
+                const shouldBePlaying = isRadioActive && !failsafeActivated && !isMutedGlobally;
+                if (shouldBePlaying && radioAudioPlayer.muted) {
+                    console.log("Smarter Watchdog: Detected unexpected mute. Forcing unmute.");
+                    radioAudioPlayer.muted = false;
+                    radioAudioPlayer.volume = lastVolume;
+                }
+            }, 2000);
+
+            const chatInput = document.getElementById('chat-input');
+            const chatSendBtn = document.getElementById('chat-send-btn');
+            chatSendBtn.addEventListener('click', () => {
+                if (chatInput.value.trim() !== '') {
+                    console.log('Chat message:', chatInput.value);
+                    chatInput.value = '';
+                }
+            });
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    chatSendBtn.click();
+                }
+            });
+
+            if (welcomeToggle && welcomeContent) {
+                const toggleText = welcomeToggle.querySelector('.toggle-text');
+                const toggleIcon = welcomeToggle.querySelector('.toggle-icon');
+                
+                welcomeToggle.addEventListener('click', () => {
+                    const isExpanded = welcomeContent.classList.toggle('expanded');
+                    if (isExpanded) {
+                        toggleText.textContent = 'read less';
+                        toggleIcon.textContent = '−';
+                    } else {
+                        toggleText.textContent = 'read more';
+                        toggleIcon.textContent = '+';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
